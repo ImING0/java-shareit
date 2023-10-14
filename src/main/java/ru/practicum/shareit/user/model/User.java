@@ -14,10 +14,10 @@ import javax.validation.constraints.Positive;
 @Builder
 public class User {
     @Positive
-    private  Long id;
+    private Long id;
     @NotBlank(message = "The name cannot be empty")
     private String name;
-    @Email (message = "Invalid mail format")
+    @Email(message = "Invalid mail format")
     @NotBlank(message = "The email cannot be empty")
     private String email;
 }

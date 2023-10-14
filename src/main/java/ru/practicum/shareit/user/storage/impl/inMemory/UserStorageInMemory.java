@@ -20,6 +20,7 @@ public class UserStorageInMemory implements IUserStorage {
     private final HashMap<Long, User> users;
     private final HashSet<String> emails;
     private final IdGenerator idGenerator;
+
     @Override
     public Optional<User> save(User user) {
         throwIfEmailDuplicate(user);
@@ -28,7 +29,6 @@ public class UserStorageInMemory implements IUserStorage {
         emails.add(user.getEmail());
         return Optional.of(user);
     }
-
 
     @Override
     public Optional<User> update(Long userId, User user) {

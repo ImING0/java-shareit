@@ -16,6 +16,7 @@ public class UserService implements IUserService {
 
     private final IUserStorage userStorage;
     private final UserMapper userMapper;
+
     @Override
     public UserDto createUser(User user) {
         userStorage.save(user);

@@ -10,20 +10,21 @@ import ru.practicum.shareit.user.service.impl.UserService;
 import javax.validation.Valid;
 import java.util.List;
 
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/users")
 public class UserController {
 
     private final UserService userService;
+
     @PostMapping
     public ResponseEntity<UserDto> createUser(@Valid @RequestBody User user) {
         return ResponseEntity.ok(userService.createUser(user));
     }
 
     @PatchMapping("/{userId}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable("userId") Long userId, @RequestBody User user) {
+    public ResponseEntity<UserDto> updateUser(@PathVariable("userId") Long userId,
+            @RequestBody User user) {
         return ResponseEntity.ok(userService.updateUser(userId, user));
     }
 

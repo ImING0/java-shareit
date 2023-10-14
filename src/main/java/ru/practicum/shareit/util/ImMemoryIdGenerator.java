@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 public class ImMemoryIdGenerator implements IdGenerator {
 
     private Long id = 0L;
+
     @Override
     public Long generateId() {
         id++;

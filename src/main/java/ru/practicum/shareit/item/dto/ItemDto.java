@@ -14,10 +14,10 @@ import javax.validation.constraints.Positive;
 public class ItemDto {
     @Positive
     private final Long id;
+    private final Long owner; /*ID Владельца вещи*/
     @NotBlank(message = "The name cannot be empty")
     private String name;
     private String description;
     private boolean available;
-    private final Long owner; /*ID Владельца вещи*/
     private Long request; /*Ссылка на запрос другого пользователя*/
 }
