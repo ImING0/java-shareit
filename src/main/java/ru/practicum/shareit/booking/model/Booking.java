@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 public class Booking {
-    private Long id; // ID of the booking
+    private final Long id; // ID of the booking
     private LocalDateTime start; // Start time of the booking
     private LocalDateTime end;  // End time of the booking
     private Long item; // ID of the item being booked
