@@ -9,9 +9,9 @@ import ru.practicum.shareit.user.exception.UserAlreadyExistsException;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 import ru.practicum.shareit.util.ErrorResponse;
 
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = "ru.practicum.shareit.user.controller")
 @Slf4j
-public class DefaultExceptionHandler {
+public class UserControllerExceptionHandler {
 
     @ExceptionHandler(value = {UserAlreadyExistsException.class})
     @ResponseStatus(HttpStatus.CONFLICT)

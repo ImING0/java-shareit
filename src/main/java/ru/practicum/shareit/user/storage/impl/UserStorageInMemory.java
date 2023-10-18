@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user.storage.impl.inMemory;
+package ru.practicum.shareit.user.storage.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -60,6 +60,7 @@ public class UserStorageInMemory implements IUserStorage {
 
     @Override
     public Optional<User> getUserById(Long userId) {
+        throwIfUserNotFoundException(userId);
         return Optional.ofNullable(users.get(userId));
     }
 

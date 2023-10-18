@@ -19,5 +19,6 @@ public class ItemDto {
     private String name;
     private String description;
     private boolean available;
-    private Long request; /*Ссылка на запрос другого пользователя*/
+    private Long request; /*Ссылка на запрос другого пользователя
+     (если вещь создана по запросу)*/
 }
