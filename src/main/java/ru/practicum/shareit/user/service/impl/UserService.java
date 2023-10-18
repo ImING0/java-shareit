@@ -25,7 +25,9 @@ public class UserService implements IUserService {
 
     @Override
     public UserDto updateUser(Long userId, User user) {
-        return userStorage.update(userId, user).map(userMapper::toUserDto).orElse(null);
+        return userStorage.update(userId, user)
+                .map(userMapper::toUserDto)
+                .orElse(null);
     }
 
     @Override
@@ -35,7 +37,9 @@ public class UserService implements IUserService {
 
     @Override
     public UserDto getUserById(Long userId) {
-        return userStorage.getUserById(userId).map(userMapper::toUserDto).orElse(null);
+        return userStorage.getUserById(userId)
+                .map(userMapper::toUserDto)
+                .orElse(null);
     }
 
     @Override

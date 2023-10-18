@@ -18,7 +18,9 @@ public class ItemControllerExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMissingRequestHeaderException(MissingRequestHeaderException ex) {
         log.error("Missing request header", ex);
-        return ErrorResponse.builder().message(ex.getMessage()).code(HttpStatus.BAD_REQUEST.value())
+        return ErrorResponse.builder()
+                .message(ex.getMessage())
+                .code(HttpStatus.BAD_REQUEST.value())
                 .build();
     }
 
@@ -26,7 +28,9 @@ public class ItemControllerExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserNotFoundException(UserNotFoundException ex) {
         log.error(ex.getMessage());
-        return ErrorResponse.builder().message(ex.getMessage()).code(HttpStatus.NOT_FOUND.value())
+        return ErrorResponse.builder()
+                .message(ex.getMessage())
+                .code(HttpStatus.NOT_FOUND.value())
                 .build();
     }
 
@@ -34,7 +38,9 @@ public class ItemControllerExceptionHandler {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleIllegalItemOwnerException(IllegalItemOwnerException ex) {
         log.error(ex.getMessage());
-        return ErrorResponse.builder().message(ex.getMessage()).code(HttpStatus.FORBIDDEN.value())
+        return ErrorResponse.builder()
+                .message(ex.getMessage())
+                .code(HttpStatus.FORBIDDEN.value())
                 .build();
     }
 }

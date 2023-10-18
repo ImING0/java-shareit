@@ -24,5 +24,6 @@ public class Item {
     @AssertTrue(message = "The item must be available for booking")
     @NotNull(message = "The availability cannot be null")
     private Boolean available; // Is the item available for booking?
-    private Long request; // ID of the request for this item if item created as a response to the request
+    private Long request;
+            // ID of the request for this item if item created as a response to the request
 }

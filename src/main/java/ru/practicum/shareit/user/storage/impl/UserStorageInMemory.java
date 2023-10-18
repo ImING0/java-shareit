@@ -34,7 +34,8 @@ public class UserStorageInMemory implements IUserStorage {
     public Optional<User> update(Long userId, User user) {
         throwIfUserNotFoundException(userId);
         User existingUser = getUserById(userId).get();
-        if (emails.contains(user.getEmail()) && !user.getEmail().equals(existingUser.getEmail())) {
+        if (emails.contains(user.getEmail()) && !user.getEmail()
+                .equals(existingUser.getEmail())) {
             throw new UserAlreadyExistsException("User with this email already exists");
         }
         if (user.getName() != null) {

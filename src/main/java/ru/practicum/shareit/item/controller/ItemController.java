@@ -29,8 +29,7 @@ public class ItemController {
 
     @PatchMapping("/{itemId}")
     public ResponseEntity<ItemDto> updateItem(@RequestHeader(REQUEST_HEADER) Long userId,
-            @PathVariable Long itemId,
-            @RequestBody Item item) {
+            @PathVariable Long itemId, @RequestBody Item item) {
         return ResponseEntity.ok(itemService.updateItem(userId, itemId, item));
     }
 
@@ -38,7 +37,8 @@ public class ItemController {
     public ResponseEntity<Void> deleteItem(@RequestHeader(REQUEST_HEADER) Long userId,
             @PathVariable Long itemId) {
         itemService.deleteItem(userId, itemId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok()
+                .build();
     }
 
     @GetMapping("/{itemId}")

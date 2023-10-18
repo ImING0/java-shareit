@@ -6,7 +6,6 @@ import ru.practicum.shareit.item.exeption.IllegalItemOwnerException;
 import ru.practicum.shareit.item.exeption.IllegalNameOrDescriptionOfItemException;
 import ru.practicum.shareit.item.exeption.ItemNotAvailableException;
 import ru.practicum.shareit.item.exeption.ItemNotFoundException;
-import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.IItemStorage;
 import ru.practicum.shareit.user.model.User;
@@ -41,7 +40,8 @@ public class ItemStorageInMemory implements IItemStorage {
                 .build();
         items.put(itemToSave.getId(), itemToSave);
         if (userItems.containsKey(userId)) {
-            userItems.get(userId).add(itemToSave.getId());
+            userItems.get(userId)
+                    .add(itemToSave.getId());
         } else {
             Set<Long> userItemIds = Set.of(itemToSave.getId());
             userItems.put(userId, userItemIds);
@@ -55,10 +55,12 @@ public class ItemStorageInMemory implements IItemStorage {
         throwIfNotOwner(userId, itemId);
         throwIfAllFieldsAreNull(item);
         Item itemToUpdate = items.get(itemId);
-        if (item.getName() != null && !item.getName().isBlank()) {
+        if (item.getName() != null && !item.getName()
+                .isBlank()) {
             itemToUpdate.setName(item.getName());
         }
-        if (item.getDescription() != null && !item.getDescription().isBlank()) {
+        if (item.getDescription() != null && !item.getDescription()
+                .isBlank()) {
             itemToUpdate.setDescription(item.getDescription());
         }
         if (item.getAvailable() != null) {
@@ -84,7 +86,8 @@ public class ItemStorageInMemory implements IItemStorage {
 
     @Override
     public List<Item> getAllOwnerItemsByOwnerId(Long ownerId) {
-        User user = userStorageInMemory.getUserById(ownerId).get();
+        User user = userStorageInMemory.getUserById(ownerId)
+                .get();
         List<Item> itemsOfUser = new ArrayList<>();
         if (!userItems.containsKey(ownerId)) {
             return List.of();
@@ -102,8 +105,11 @@ public class ItemStorageInMemory implements IItemStorage {
         List<Item> itemsToReturn = new ArrayList<>();
         name = name.toLowerCase();
         for (Item item : items.values()) {
-            if (item.getName().toLowerCase().contains(name) || item.getDescription().toLowerCase().contains(name)
-            && item.getAvailable()) {
+            if (item.getName()
+                    .toLowerCase()
+                    .contains(name) || item.getDescription()
+                    .toLowerCase()
+                    .contains(name) && item.getAvailable()) {
                 itemsToReturn.add(item);
             }
         }
@@ -111,11 +117,12 @@ public class ItemStorageInMemory implements IItemStorage {
     }
 
     private void throwIfNotOwner(Long userId, Long itemId) {
-        if (!items.get(itemId).getOwner().equals(userId)) {
+        if (!items.get(itemId)
+                .getOwner()
+                .equals(userId)) {
             throw new IllegalItemOwnerException("Item owner is not the same as user");
         }
     }
-
 
     private void throwIfNameOrDescriptionIsNull(Item item) {
         if (item.getName() == null || item.getDescription() == null) {
@@ -137,8 +144,8 @@ public class ItemStorageInMemory implements IItemStorage {
     }
 
     private void throwIfAllFieldsAreNull(Item item) {
-        if (item.getName() == null && item.getDescription() == null && item.getAvailable() == null &&
-                item.getRequest() == null) {
+        if (item.getName() == null && item.getDescription() == null && item.getAvailable() == null
+                && item.getRequest() == null) {
             throw new IllegalNameOrDescriptionOfItemException(
                     "Item name, description, availability and request must be not null");
         }

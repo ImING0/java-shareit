@@ -17,7 +17,9 @@ public class UserControllerExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleUserEmailAlreadyExistException(UserAlreadyExistsException ex) {
         log.error(ex.getMessage());
-        return ErrorResponse.builder().message(ex.getMessage()).code(HttpStatus.CONFLICT.value())
+        return ErrorResponse.builder()
+                .message(ex.getMessage())
+                .code(HttpStatus.CONFLICT.value())
                 .build();
     }
 
@@ -25,7 +27,9 @@ public class UserControllerExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserNotFoundException(UserNotFoundException ex) {
         log.error(ex.getMessage());
-        return ErrorResponse.builder().message(ex.getMessage()).code(HttpStatus.NOT_FOUND.value())
+        return ErrorResponse.builder()
+                .message(ex.getMessage())
+                .code(HttpStatus.NOT_FOUND.value())
                 .build();
     }
 }
