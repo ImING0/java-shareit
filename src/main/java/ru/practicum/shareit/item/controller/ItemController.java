@@ -20,25 +20,25 @@ import java.util.List;
 @Slf4j
 public class ItemController {
 
-    private final String REQUEST_HEADER = "X-Sharer-User-Id";
+    private final String requestHeader = "X-Sharer-User-Id";
     private final IItemService itemService;
 
     @PostMapping
-    public ResponseEntity<ItemDto> createItem(@RequestHeader(REQUEST_HEADER) Long userId,
+    public ResponseEntity<ItemDto> createItem(@RequestHeader(requestHeader) Long userId,
             @RequestBody @Valid Item item) {
         log.info("createItem request: userId = {}, item = {}", userId, item);
         return ResponseEntity.ok(itemService.createItem(userId, item));
     }
 
     @PatchMapping("/{itemId}")
-    public ResponseEntity<ItemDto> updateItem(@RequestHeader(REQUEST_HEADER) Long userId,
+    public ResponseEntity<ItemDto> updateItem(@RequestHeader(requestHeader) Long userId,
             @PathVariable Long itemId, @RequestBody Item item) {
         log.info("updateItem request: userId = {}, itemId = {}, item = {}", userId, itemId, item);
         return ResponseEntity.ok(itemService.updateItem(userId, itemId, item));
     }
 
     @DeleteMapping("/{itemId}")
-    public ResponseEntity<Void> deleteItem(@RequestHeader(REQUEST_HEADER) Long userId,
+    public ResponseEntity<Void> deleteItem(@RequestHeader(requestHeader) Long userId,
             @PathVariable Long itemId) {
         itemService.deleteItem(userId, itemId);
         log.info("deleteItem request: userId = {}, itemId = {}", userId, itemId);
@@ -54,7 +54,7 @@ public class ItemController {
 
     @GetMapping
     public ResponseEntity<List<ItemDto>> getAllOwnerItemsByOwnerId(
-            @RequestHeader(REQUEST_HEADER) Long ownerId) {
+            @RequestHeader(requestHeader) Long ownerId) {
         log.info("getAllOwnerItemsByOwnerId request: ownerId = {}", ownerId);
         return ResponseEntity.ok(itemService.getAllOwnerItemsByOwnerId(ownerId));
     }
