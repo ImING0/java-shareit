@@ -7,11 +7,15 @@ import java.util.List;
 
 public interface IItemService {
 
-    ItemDto createItem(Long userId, Item item);
+    ItemDto createItem(Long userId,
+                       Item item);
 
-    ItemDto updateItem(Long userId, Long itemId, Item item);
+    ItemDto updateItem(Long userId,
+                       Long itemId,
+                       Item item);
 
-    void deleteItem(Long userId, Long itemId);
+    void deleteItem(Long userId,
+                    Long itemId);
 
     ItemDto getItemById(Long itemId);
 

@@ -19,21 +19,25 @@ public class ItemService implements IItemService {
     private final ItemMapper itemMapper;
 
     @Override
-    public ItemDto createItem(Long userId, Item item) {
+    public ItemDto createItem(Long userId,
+                              Item item) {
         Item savedItem = itemStorage.save(userId, item)
                 .get();
         return itemMapper.toItemDto(savedItem);
     }
 
     @Override
-    public ItemDto updateItem(Long userId, Long itemId, Item item) {
+    public ItemDto updateItem(Long userId,
+                              Long itemId,
+                              Item item) {
         return itemStorage.update(userId, itemId, item)
                 .map(itemMapper::toItemDto)
                 .get();
     }
 
     @Override
-    public void deleteItem(Long userId, Long itemId) {
+    public void deleteItem(Long userId,
+                           Long itemId) {
         itemStorage.delete(userId, itemId);
     }
 

@@ -8,7 +8,8 @@ import java.util.Optional;
 public interface IUserStorage {
     Optional<User> save(User user);
 
-    Optional<User> update(Long userId, User user);
+    Optional<User> update(Long userId,
+                          User user);
 
     void delete(Long userId);
 

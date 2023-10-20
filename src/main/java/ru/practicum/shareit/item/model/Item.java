@@ -25,5 +25,5 @@ public class Item {
     @NotNull(message = "The availability cannot be null")
     private Boolean available;
     private Long request;
-            // ID of the request for this item if item created as a response to the request
+    // ID of the request for this item if item created as a response to the request
 }

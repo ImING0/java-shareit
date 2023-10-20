@@ -31,7 +31,8 @@ public class UserStorageInMemory implements IUserStorage {
     }
 
     @Override
-    public Optional<User> update(Long userId, User user) {
+    public Optional<User> update(Long userId,
+                                 User user) {
         throwIfUserNotFoundException(userId);
         User existingUser = getUserById(userId).get();
         if (emails.contains(user.getEmail()) && !user.getEmail()
