@@ -16,4 +16,6 @@ public interface IUserStorage {
     Optional<User> findById(Long userId);
 
     List<User> findAll();
+
+    boolean existsByEmail(String email);
 }

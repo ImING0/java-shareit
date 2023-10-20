@@ -2,6 +2,7 @@ package ru.practicum.shareit.user.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.ResourceAlreadyExistsException;
 import ru.practicum.shareit.exception.ResourceNotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
@@ -20,7 +21,7 @@ public class UserService implements IUserService {
 
     @Override
     public UserDto create(User user) {
-        // TODO check if email is unique
+        throwIfEmailDuplicate(user);
         userStorage.save(user);
         return userMapper.toUserDto(user);
     }
@@ -55,5 +56,12 @@ public class UserService implements IUserService {
         userStorage.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("User with id %d not found", userId)));
+    }
+
+    private void throwIfEmailDuplicate(User user) {
+        if (userStorage.existsByEmail(user.getEmail())) {
+            throw new ResourceAlreadyExistsException(String.format("User with email %s already exists",
+                    user.getEmail()));
+        }
     }
 }

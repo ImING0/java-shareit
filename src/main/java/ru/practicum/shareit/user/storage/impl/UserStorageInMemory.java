@@ -23,7 +23,6 @@ public class UserStorageInMemory implements IUserStorage {
 
     @Override
     public User save(User user) {
-        throwIfEmailDuplicate(user);
         user.setId(idGenerator.generateId());
         users.put(user.getId(), user);
         emails.add(user.getEmail());
@@ -68,10 +67,7 @@ public class UserStorageInMemory implements IUserStorage {
         return List.copyOf(users.values());
     }
 
-    private void throwIfEmailDuplicate(User user) {
-        if (emails.contains(user.getEmail())) {
-            throw new ResourceAlreadyExistsException(String.format("User with email %s already exists",
-                    user.getEmail()));
-        }
+    public boolean existsByEmail(String email) {
+        return emails.contains(email);
     }
 }
