@@ -43,14 +43,14 @@ public class ItemService implements IItemService {
 
     @Override
     public ItemDto getById(Long itemId) {
-        return itemStorage.getById(itemId)
+        return itemStorage.findById(itemId)
                 .map(itemMapper::toItemDto)
                 .get();
     }
 
     @Override
     public List<ItemDto> getAllOwnerItemsByOwnerId(Long ownerId) {
-        return itemStorage.getAllOwnerItemsByOwnerId(ownerId)
+        return itemStorage.findAllOwnerItemsByOwnerId(ownerId)
                 .stream()
                 .map(itemMapper::toItemDto)
                 .collect(Collectors.toList());

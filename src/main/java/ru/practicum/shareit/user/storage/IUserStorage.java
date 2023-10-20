@@ -13,7 +13,7 @@ public interface IUserStorage {
 
     void delete(Long userId);
 
-    Optional<User> getById(Long userId);
+    Optional<User> findById(Long userId);
 
-    List<User> getAll();
+    List<User> findAll();
 }

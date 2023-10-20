@@ -27,7 +27,7 @@ public class ItemStorageInMemory implements IItemStorage {
     @Override
     public Optional<Item> save(Long userId,
                                Item item) {
-        User user = userStorageInMemory.getById(userId)
+        User user = userStorageInMemory.findById(userId)
                 .get();
         Long requestId = item.getRequest();
 
@@ -83,14 +83,14 @@ public class ItemStorageInMemory implements IItemStorage {
     }
 
     @Override
-    public Optional<Item> getById(Long itemId) {
+    public Optional<Item> findById(Long itemId) {
         throwIfItemNotFound(itemId);
         return Optional.of(items.get(itemId));
     }
 
     @Override
-    public List<Item> getAllOwnerItemsByOwnerId(Long ownerId) {
-        User user = userStorageInMemory.getById(ownerId)
+    public List<Item> findAllOwnerItemsByOwnerId(Long ownerId) {
+        User user = userStorageInMemory.findById(ownerId)
                 .get();
         List<Item> itemsOfUser = new ArrayList<>();
         if (!userItems.containsKey(ownerId)) {

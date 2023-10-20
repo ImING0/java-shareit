@@ -34,7 +34,7 @@ public class UserStorageInMemory implements IUserStorage {
     public Optional<User> update(Long userId,
                                  User user) {
         throwIfUserNotFoundException(userId);
-        User existingUser = getById(userId).get();
+        User existingUser = findById(userId).get();
         if (emails.contains(user.getEmail()) && !user.getEmail()
                 .equals(existingUser.getEmail())) {
             throw new ResourceAlreadyExistsException("User with this email already exists");
@@ -61,13 +61,13 @@ public class UserStorageInMemory implements IUserStorage {
     }
 
     @Override
-    public Optional<User> getById(Long userId) {
+    public Optional<User> findById(Long userId) {
         throwIfUserNotFoundException(userId);
         return Optional.ofNullable(users.get(userId));
     }
 
     @Override
-    public List<User> getAll() {
+    public List<User> findAll() {
         return List.copyOf(users.values());
     }
 

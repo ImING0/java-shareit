@@ -17,9 +17,9 @@ public interface IItemStorage {
     void delete(Long userId,
                 Long itemId);
 
-    Optional<Item> getById(Long itemId);
+    Optional<Item> findById(Long itemId);
 
-    List<Item> getAllOwnerItemsByOwnerId(Long ownerId);
+    List<Item> findAllOwnerItemsByOwnerId(Long ownerId);
 
     List<Item> search(String name);
 }

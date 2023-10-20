@@ -38,13 +38,13 @@ public class UserService implements IUserService {
 
     @Override
     public UserDto getById(Long userId) {
-        return userStorage.getById(userId)
+        return userStorage.findById(userId)
                 .map(userMapper::toUserDto)
                 .orElse(null);
     }
 
     @Override
     public List<UserDto> getAll() {
-        return userMapper.toUserDtoList(userStorage.getAll());
+        return userMapper.toUserDtoList(userStorage.findAll());
     }
 }
