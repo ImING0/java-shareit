@@ -2,10 +2,10 @@ package ru.practicum.shareit.item.storage.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.item.exeption.IllegalItemOwnerException;
-import ru.practicum.shareit.item.exeption.IllegalNameOrDescriptionOfItemException;
-import ru.practicum.shareit.item.exeption.ItemNotAvailableException;
-import ru.practicum.shareit.item.exeption.ItemNotFoundException;
+import ru.practicum.shareit.exception.IllegalOwnerException;
+import ru.practicum.shareit.exception.IllegalNameOrDescriptionException;
+import ru.practicum.shareit.exception.NotAvailableException;
+import ru.practicum.shareit.exception.ResourceNotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.IItemStorage;
 import ru.practicum.shareit.user.model.User;
@@ -125,33 +125,33 @@ public class ItemStorageInMemory implements IItemStorage {
         if (!items.get(itemId)
                 .getOwner()
                 .equals(userId)) {
-            throw new IllegalItemOwnerException("Item owner is not the same as user");
+            throw new IllegalOwnerException("Item owner is not the same as user");
         }
     }
 
     private void throwIfNameOrDescriptionIsNull(Item item) {
         if (item.getName() == null || item.getDescription() == null) {
-            throw new IllegalNameOrDescriptionOfItemException(
+            throw new IllegalNameOrDescriptionException(
                     "Item name and description must be not null");
         }
     }
 
     private void throwIfItemNotFound(Long itemId) {
         if (!items.containsKey(itemId)) {
-            throw new ItemNotFoundException(String.format("Item with id %d not found", itemId));
+            throw new ResourceNotFoundException(String.format("Item with id %d not found", itemId));
         }
     }
 
     private void throwIfItemAvailableIsNull(Item item) {
         if (item.getAvailable() == null) {
-            throw new ItemNotAvailableException("Item availability must be not null");
+            throw new NotAvailableException("Item availability must be not null");
         }
     }
 
     private void throwIfAllFieldsAreNull(Item item) {
         if (item.getName() == null && item.getDescription() == null && item.getAvailable() == null
                 && item.getRequest() == null) {
-            throw new IllegalNameOrDescriptionOfItemException(
+            throw new IllegalNameOrDescriptionException(
                     "Item name, description, availability and request must be not null");
         }
     }

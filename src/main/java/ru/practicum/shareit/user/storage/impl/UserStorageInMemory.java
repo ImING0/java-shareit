@@ -2,8 +2,8 @@ package ru.practicum.shareit.user.storage.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.user.exception.UserAlreadyExistsException;
-import ru.practicum.shareit.user.exception.UserNotFoundException;
+import ru.practicum.shareit.exception.ResourceAlreadyExistsException;
+import ru.practicum.shareit.exception.ResourceNotFoundException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.IUserStorage;
 import ru.practicum.shareit.util.IdGenerator;
@@ -37,7 +37,7 @@ public class UserStorageInMemory implements IUserStorage {
         User existingUser = getUserById(userId).get();
         if (emails.contains(user.getEmail()) && !user.getEmail()
                 .equals(existingUser.getEmail())) {
-            throw new UserAlreadyExistsException("User with this email already exists");
+            throw new ResourceAlreadyExistsException("User with this email already exists");
         }
         if (user.getName() != null) {
             existingUser.setName(user.getName());
@@ -73,13 +73,13 @@ public class UserStorageInMemory implements IUserStorage {
 
     private void throwIfEmailDuplicate(User user) {
         if (emails.contains(user.getEmail())) {
-            throw new UserAlreadyExistsException("User with this email already exists");
+            throw new ResourceAlreadyExistsException("User with this email already exists");
         }
     }
 
     private void throwIfUserNotFoundException(Long userId) {
         if (!users.containsKey(userId)) {
-            throw new UserNotFoundException(String.format("User with id %d not found", userId));
+            throw new ResourceNotFoundException(String.format("User with id %d not found", userId));
         }
     }
 }
