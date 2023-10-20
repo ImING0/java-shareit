@@ -2,10 +2,6 @@ package ru.practicum.shareit.item.storage.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.exception.IllegalOwnerException;
-import ru.practicum.shareit.exception.IllegalNameOrDescriptionException;
-import ru.practicum.shareit.exception.NotAvailableException;
-import ru.practicum.shareit.exception.ResourceNotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.IItemStorage;
 import ru.practicum.shareit.user.model.User;
@@ -113,6 +109,4 @@ public class ItemStorageInMemory implements IItemStorage {
         }
         return itemsToReturn;
     }
-
-
 }

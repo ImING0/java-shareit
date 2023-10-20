@@ -3,7 +3,6 @@ package ru.practicum.shareit.user.storage.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exception.ResourceAlreadyExistsException;
-import ru.practicum.shareit.exception.ResourceNotFoundException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.IUserStorage;
 import ru.practicum.shareit.util.IdGenerator;

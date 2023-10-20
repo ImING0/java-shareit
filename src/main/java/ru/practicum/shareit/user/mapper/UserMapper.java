@@ -25,6 +25,7 @@ public class UserMapper {
                 .email(userDto.getEmail())
                 .build();
     }
+
     public List<UserDto> toUserDtoList(List<User> users) {
         return users.stream()
                 .map(this::toUserDto)

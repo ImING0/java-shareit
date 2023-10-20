@@ -42,7 +42,8 @@ public class UserService implements IUserService {
     @Override
     public UserDto getById(Long userId) {
         throwIfUserNotFoundException(userId);
-        UserDto userDto = userMapper.toUserDto(userStorage.findById(userId).get());
+        UserDto userDto = userMapper.toUserDto(userStorage.findById(userId)
+                .get());
         return userDto;
     }
 
@@ -59,8 +60,8 @@ public class UserService implements IUserService {
 
     private void throwIfEmailDuplicate(User user) {
         if (userStorage.existsByEmail(user.getEmail())) {
-            throw new ResourceAlreadyExistsException(String.format("User with email %s already exists",
-                    user.getEmail()));
+            throw new ResourceAlreadyExistsException(
+                    String.format("User with email %s already exists", user.getEmail()));
         }
     }
 }

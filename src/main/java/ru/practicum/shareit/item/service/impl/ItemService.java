@@ -78,13 +78,16 @@ public class ItemService implements IItemService {
 
     private void throwIfUserNotFound(Long userId) {
         userStorage.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User with id " + userId + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "User with id " + userId + " not found"));
     }
 
     private void throwIfItemNotFound(Long itemId) {
         itemStorage.findById(itemId)
-                .orElseThrow(() -> new ResourceNotFoundException("Item with id " + itemId + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Item with id " + itemId + " not found"));
     }
+
     private void throwIfAllFieldsAreNull(Item item) {
         if (item.getName() == null && item.getDescription() == null && item.getAvailable() == null
                 && item.getRequest() == null) {
