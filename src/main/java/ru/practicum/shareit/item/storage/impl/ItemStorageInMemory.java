@@ -25,8 +25,8 @@ public class ItemStorageInMemory implements IItemStorage {
     //TODO add feadback storage
 
     @Override
-    public Optional<Item> save(Long userId,
-                               Item item) {
+    public Item save(Long userId,
+                     Item item) {
         User user = userStorageInMemory.findById(userId)
                 .get();
         Long requestId = item.getRequest();
@@ -47,13 +47,13 @@ public class ItemStorageInMemory implements IItemStorage {
             Set<Long> userItemIds = Set.of(itemToSave.getId());
             userItems.put(userId, userItemIds);
         }
-        return Optional.of(itemToSave);
+        return itemToSave;
     }
 
     @Override
-    public Optional<Item> update(Long userId,
-                                 Long itemId,
-                                 Item item) {
+    public Item update(Long userId,
+                       Long itemId,
+                       Item item) {
         throwIfItemNotFound(itemId);
         throwIfNotOwner(userId, itemId);
         throwIfAllFieldsAreNull(item);
@@ -70,7 +70,7 @@ public class ItemStorageInMemory implements IItemStorage {
             itemToUpdate.setAvailable(item.getAvailable());
         }
         items.put(itemId, itemToUpdate);
-        return Optional.of(itemToUpdate);
+        return itemToUpdate;
     }
 
     @Override

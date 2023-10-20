@@ -22,17 +22,17 @@ public class UserStorageInMemory implements IUserStorage {
     private final IdGenerator idGenerator;
 
     @Override
-    public Optional<User> save(User user) {
+    public User save(User user) {
         throwIfEmailDuplicate(user);
         user.setId(idGenerator.generateId());
         users.put(user.getId(), user);
         emails.add(user.getEmail());
-        return Optional.of(user);
+        return user;
     }
 
     @Override
-    public Optional<User> update(Long userId,
-                                 User user) {
+    public User update(Long userId,
+                       User user) {
         throwIfUserNotFoundException(userId);
         User existingUser = findById(userId).get();
         if (emails.contains(user.getEmail()) && !user.getEmail()
@@ -49,7 +49,7 @@ public class UserStorageInMemory implements IUserStorage {
         }
 
         users.put(userId, existingUser);
-        return Optional.of(existingUser);
+        return existingUser;
     }
 
     @Override
