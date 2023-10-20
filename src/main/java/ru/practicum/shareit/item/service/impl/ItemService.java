@@ -2,7 +2,7 @@ package ru.practicum.shareit.item.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.IllegalNameOrDescriptionException;
+import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.IllegalOwnerException;
 import ru.practicum.shareit.exception.ResourceNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -91,7 +91,7 @@ public class ItemService implements IItemService {
     private void throwIfAllFieldsAreNull(Item item) {
         if (item.getName() == null && item.getDescription() == null && item.getAvailable() == null
                 && item.getRequest() == null) {
-            throw new IllegalNameOrDescriptionException(
+            throw new BadRequestException(
                     "Item name, description, availability and request must be not null");
         }
     }
