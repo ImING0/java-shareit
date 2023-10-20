@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.impl.UserService;
 
@@ -18,16 +19,19 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final UserMapper userMapper;
 
     @PostMapping
-    public ResponseEntity<UserDto> createUser(@Valid @RequestBody User user) {
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
+        User user = userMapper.toUser(userDto);
         log.info("createUser request: user = {}", user);
         return ResponseEntity.ok(userService.createUser(user));
     }
 
     @PatchMapping("/{userId}")
     public ResponseEntity<UserDto> updateUser(@PathVariable("userId") Long userId,
-                                              @RequestBody User user) {
+                                              @RequestBody UserDto userDto) {
+        User user = userMapper.toUser(userDto);
         log.info("updateUser request: userId = {}, user = {}", userId, user);
         return ResponseEntity.ok(userService.updateUser(userId, user));
     }
