@@ -2,6 +2,7 @@ package ru.practicum.shareit.user.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.ResourceNotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
@@ -19,6 +20,7 @@ public class UserService implements IUserService {
 
     @Override
     public UserDto create(User user) {
+        // TODO check if email is unique
         userStorage.save(user);
         return userMapper.toUserDto(user);
     }
@@ -26,16 +28,19 @@ public class UserService implements IUserService {
     @Override
     public UserDto update(Long userId,
                           User user) {
+        throwIfUserNotFoundException(userId);
         return userMapper.toUserDto(userStorage.update(userId, user));
     }
 
     @Override
     public void delete(Long userId) {
+        throwIfUserNotFoundException(userId);
         userStorage.delete(userId);
     }
 
     @Override
     public UserDto getById(Long userId) {
+        throwIfUserNotFoundException(userId);
         return userStorage.findById(userId)
                 .map(userMapper::toUserDto)
                 .orElse(null);
@@ -44,5 +49,11 @@ public class UserService implements IUserService {
     @Override
     public List<UserDto> getAll() {
         return userMapper.toUserDtoList(userStorage.findAll());
+    }
+
+    private void throwIfUserNotFoundException(Long userId) {
+        userStorage.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("User with id %d not found", userId)));
     }
 }

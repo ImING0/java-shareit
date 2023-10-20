@@ -54,9 +54,6 @@ public class ItemStorageInMemory implements IItemStorage {
     public Item update(Long userId,
                        Long itemId,
                        Item item) {
-        throwIfItemNotFound(itemId);
-        throwIfNotOwner(userId, itemId);
-        throwIfAllFieldsAreNull(item);
         Item itemToUpdate = items.get(itemId);
         if (item.getName() != null && !item.getName()
                 .isBlank()) {
@@ -76,15 +73,12 @@ public class ItemStorageInMemory implements IItemStorage {
     @Override
     public void delete(Long userId,
                        Long itemId) {
-        throwIfItemNotFound(itemId);
-        throwIfNotOwner(userId, itemId);
         items.remove(itemId);
         userItems.remove(userId, itemId);
     }
 
     @Override
     public Optional<Item> findById(Long itemId) {
-        throwIfItemNotFound(itemId);
         return Optional.of(items.get(itemId));
     }
 
@@ -120,39 +114,5 @@ public class ItemStorageInMemory implements IItemStorage {
         return itemsToReturn;
     }
 
-    private void throwIfNotOwner(Long userId,
-                                 Long itemId) {
-        if (!items.get(itemId)
-                .getOwner()
-                .equals(userId)) {
-            throw new IllegalOwnerException("Item owner is not the same as user");
-        }
-    }
 
-    private void throwIfNameOrDescriptionIsNull(Item item) {
-        if (item.getName() == null || item.getDescription() == null) {
-            throw new IllegalNameOrDescriptionException(
-                    "Item name and description must be not null");
-        }
-    }
-
-    private void throwIfItemNotFound(Long itemId) {
-        if (!items.containsKey(itemId)) {
-            throw new ResourceNotFoundException(String.format("Item with id %d not found", itemId));
-        }
-    }
-
-    private void throwIfItemAvailableIsNull(Item item) {
-        if (item.getAvailable() == null) {
-            throw new NotAvailableException("Item availability must be not null");
-        }
-    }
-
-    private void throwIfAllFieldsAreNull(Item item) {
-        if (item.getName() == null && item.getDescription() == null && item.getAvailable() == null
-                && item.getRequest() == null) {
-            throw new IllegalNameOrDescriptionException(
-                    "Item name, description, availability and request must be not null");
-        }
-    }
 }
