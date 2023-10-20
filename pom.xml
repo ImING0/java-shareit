@@ -17,6 +17,7 @@
 
 	<properties>
 		<java.version>11</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<dependencies>
@@ -57,7 +58,6 @@
 	</dependencies>
 
 	<build>
-		<sourceEncoding>UTF-8</sourceEncoding>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
