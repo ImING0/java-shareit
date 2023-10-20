@@ -19,31 +19,31 @@ public class ItemService implements IItemService {
     private final ItemMapper itemMapper;
 
     @Override
-    public ItemDto createItem(Long userId,
-                              Item item) {
+    public ItemDto create(Long userId,
+                          Item item) {
         Item savedItem = itemStorage.save(userId, item)
                 .get();
         return itemMapper.toItemDto(savedItem);
     }
 
     @Override
-    public ItemDto updateItem(Long userId,
-                              Long itemId,
-                              Item item) {
+    public ItemDto update(Long userId,
+                          Long itemId,
+                          Item item) {
         return itemStorage.update(userId, itemId, item)
                 .map(itemMapper::toItemDto)
                 .get();
     }
 
     @Override
-    public void deleteItem(Long userId,
-                           Long itemId) {
+    public void delete(Long userId,
+                       Long itemId) {
         itemStorage.delete(userId, itemId);
     }
 
     @Override
-    public ItemDto getItemById(Long itemId) {
-        return itemStorage.getItemById(itemId)
+    public ItemDto getById(Long itemId) {
+        return itemStorage.getById(itemId)
                 .map(itemMapper::toItemDto)
                 .get();
     }
@@ -57,11 +57,11 @@ public class ItemService implements IItemService {
     }
 
     @Override
-    public List<ItemDto> searchItem(String name) {
+    public List<ItemDto> search(String name) {
         if (name == null || name.isEmpty() || name.isBlank()) {
             return List.of();
         }
-        return itemStorage.searchItem(name)
+        return itemStorage.search(name)
                 .stream()
                 .map(itemMapper::toItemDto)
                 .collect(Collectors.toList());

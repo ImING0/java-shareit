@@ -25,7 +25,7 @@ public class UserController {
     public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
         User user = userMapper.toUser(userDto);
         log.info("createUser request: user = {}", user);
-        return ResponseEntity.ok(userService.createUser(user));
+        return ResponseEntity.ok(userService.create(user));
     }
 
     @PatchMapping("/{userId}")
@@ -33,12 +33,12 @@ public class UserController {
                                               @RequestBody UserDto userDto) {
         User user = userMapper.toUser(userDto);
         log.info("updateUser request: userId = {}, user = {}", userId, user);
-        return ResponseEntity.ok(userService.updateUser(userId, user));
+        return ResponseEntity.ok(userService.update(userId, user));
     }
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable("userId") Long userId) {
-        userService.deleteUser(userId);
+        userService.delete(userId);
         log.info("deleteUser request: userId = {}", userId);
         return ResponseEntity.ok()
                 .build();
@@ -47,12 +47,12 @@ public class UserController {
     @GetMapping("/{userId}")
     public ResponseEntity<UserDto> getUserById(@PathVariable("userId") Long userId) {
         log.info("getUserById request: userId = {}", userId);
-        return ResponseEntity.ok(userService.getUserById(userId));
+        return ResponseEntity.ok(userService.getById(userId));
     }
 
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {
         log.info("getAllUsers request");
-        return ResponseEntity.ok(userService.getAllUsers());
+        return ResponseEntity.ok(userService.getAll());
     }
 }

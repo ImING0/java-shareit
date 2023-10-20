@@ -18,33 +18,33 @@ public class UserService implements IUserService {
     private final UserMapper userMapper;
 
     @Override
-    public UserDto createUser(User user) {
+    public UserDto create(User user) {
         userStorage.save(user);
         return userMapper.toUserDto(user);
     }
 
     @Override
-    public UserDto updateUser(Long userId,
-                              User user) {
+    public UserDto update(Long userId,
+                          User user) {
         return userStorage.update(userId, user)
                 .map(userMapper::toUserDto)
                 .orElse(null);
     }
 
     @Override
-    public void deleteUser(Long userId) {
+    public void delete(Long userId) {
         userStorage.delete(userId);
     }
 
     @Override
-    public UserDto getUserById(Long userId) {
-        return userStorage.getUserById(userId)
+    public UserDto getById(Long userId) {
+        return userStorage.getById(userId)
                 .map(userMapper::toUserDto)
                 .orElse(null);
     }
 
     @Override
-    public List<UserDto> getAllUsers() {
+    public List<UserDto> getAll() {
         return userMapper.toUserDtoList(userStorage.getAll());
     }
 }

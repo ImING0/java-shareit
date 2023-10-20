@@ -30,7 +30,7 @@ public class ItemController {
                                               @RequestBody @Valid ItemDto itemDto) {
         Item item = itemMapper.toItem(itemDto);
         log.info("createItem request: userId = {}, item = {}", userId, item);
-        return ResponseEntity.ok(itemService.createItem(userId, item));
+        return ResponseEntity.ok(itemService.create(userId, item));
     }
 
     @PatchMapping("/{itemId}")
@@ -39,13 +39,13 @@ public class ItemController {
                                               @RequestBody ItemDto itemDto) {
         Item item = itemMapper.toItem(itemDto);
         log.info("updateItem request: userId = {}, itemId = {}, item = {}", userId, itemId, item);
-        return ResponseEntity.ok(itemService.updateItem(userId, itemId, item));
+        return ResponseEntity.ok(itemService.update(userId, itemId, item));
     }
 
     @DeleteMapping("/{itemId}")
     public ResponseEntity<Void> deleteItem(@RequestHeader(requestHeader) Long userId,
                                            @PathVariable Long itemId) {
-        itemService.deleteItem(userId, itemId);
+        itemService.delete(userId, itemId);
         log.info("deleteItem request: userId = {}, itemId = {}", userId, itemId);
         return ResponseEntity.ok()
                 .build();
@@ -54,7 +54,7 @@ public class ItemController {
     @GetMapping("/{itemId}")
     public ResponseEntity<ItemDto> getItemById(@PathVariable Long itemId) {
         log.info("getItemById request: itemId = {}", itemId);
-        return ResponseEntity.ok(itemService.getItemById(itemId));
+        return ResponseEntity.ok(itemService.getById(itemId));
     }
 
     @GetMapping
@@ -67,7 +67,7 @@ public class ItemController {
     @GetMapping("/search")
     public ResponseEntity<List<ItemDto>> searchItem(@RequestParam("text") String text) {
         log.info("searchItem request: text = {}", text);
-        return ResponseEntity.ok(itemService.searchItem(text));
+        return ResponseEntity.ok(itemService.search(text));
     }
 }
 
