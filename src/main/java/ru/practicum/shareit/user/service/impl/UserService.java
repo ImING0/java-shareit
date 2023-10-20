@@ -42,9 +42,8 @@ public class UserService implements IUserService {
     @Override
     public UserDto getById(Long userId) {
         throwIfUserNotFoundException(userId);
-        return userStorage.findById(userId)
-                .map(userMapper::toUserDto)
-                .orElse(null);
+        UserDto userDto = userMapper.toUserDto(userStorage.findById(userId).get());
+        return userDto;
     }
 
     @Override
