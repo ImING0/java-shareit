@@ -17,6 +17,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
+    // Мне кажется, что проверки на нулль тут избыточны, ведь в БД уже есть проверка на это?
+    // или это обеспечивает большую безопастность ?
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

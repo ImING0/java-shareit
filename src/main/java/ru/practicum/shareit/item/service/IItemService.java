@@ -14,9 +14,6 @@ public interface IItemService {
                    Long itemId,
                    Item item);
 
-    void delete(Long userId,
-                Long itemId);
-
     ItemDto getById(Long itemId);
 
     List<ItemDto> getAllOwnerItemsByOwnerId(Long ownerId);

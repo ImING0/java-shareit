@@ -42,15 +42,6 @@ public class ItemController {
         return ResponseEntity.ok(itemService.update(userId, itemId, item));
     }
 
-    @DeleteMapping("/{itemId}")
-    public ResponseEntity<Void> deleteItem(@RequestHeader(requestHeader) Long userId,
-                                           @PathVariable Long itemId) {
-        itemService.delete(userId, itemId);
-        log.info("deleteItem request: userId = {}, itemId = {}", userId, itemId);
-        return ResponseEntity.ok()
-                .build();
-    }
-
     @GetMapping("/{itemId}")
     public ResponseEntity<ItemDto> getItemById(@PathVariable Long itemId) {
         log.info("getItemById request: itemId = {}", itemId);
