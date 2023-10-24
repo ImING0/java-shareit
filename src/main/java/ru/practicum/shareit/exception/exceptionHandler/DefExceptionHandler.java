@@ -14,6 +14,8 @@ import ru.practicum.shareit.util.ErrorResponse;
 @Slf4j
 @RestControllerAdvice(basePackages = "ru.practicum.shareit")
 public class DefExceptionHandler {
+
+    // TODO: Добавить обработку всех возможных исключений (своих)
     @ExceptionHandler(MissingRequestHeaderException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMissingRequestHeaderException(MissingRequestHeaderException ex) {

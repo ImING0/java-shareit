@@ -2,66 +2,71 @@ package ru.practicum.shareit.user.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.ResourceAlreadyExistsException;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.ResourceNotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.service.IUserService;
-import ru.practicum.shareit.user.storage.IUserStorage;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserService implements IUserService {
 
-    private final IUserStorage userStorage;
+    private final UserRepository userRepository;
     private final UserMapper userMapper;
 
     @Override
+    @Transactional
     public UserDto create(User user) {
-        throwIfEmailDuplicate(user);
-        userStorage.save(user);
-        return userMapper.toUserDto(user);
+        return userMapper.toUserDto(userRepository.save(user));
     }
 
     @Override
     public UserDto update(Long userId,
                           User user) {
         throwIfUserNotFoundException(userId);
-        return userMapper.toUserDto(userStorage.update(userId, user));
+        User existingUser = userRepository.findById(userId)
+                .get();
+        if (user.getName() != null && !user.getName()
+                .isBlank()) {
+            existingUser.setName(user.getName());
+        }
+        if (user.getEmail() != null && !user.getEmail()
+                .isBlank()) {
+            existingUser.setEmail(user.getEmail());
+        }
+
+        return userMapper.toUserDto(userRepository.save(existingUser));
     }
 
     @Override
     public void delete(Long userId) {
-        throwIfUserNotFoundException(userId);
-        userStorage.delete(userId);
+        userRepository.deleteById(userId);
     }
 
     @Override
     public UserDto getById(Long userId) {
-        throwIfUserNotFoundException(userId);
-        UserDto userDto = userMapper.toUserDto(userStorage.findById(userId)
-                .get());
-        return userDto;
+        return userMapper.toUserDto(userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("User with id %d not found", userId))));
     }
 
     @Override
     public List<UserDto> getAll() {
-        return userMapper.toUserDtoList(userStorage.findAll());
+        return userRepository.findAll()
+                .stream()
+                .map(userMapper::toUserDto)
+                .collect(Collectors.toList());
     }
 
     private void throwIfUserNotFoundException(Long userId) {
-        userStorage.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("User with id %d not found", userId)));
-    }
-
-    private void throwIfEmailDuplicate(User user) {
-        if (userStorage.existsByEmail(user.getEmail())) {
-            throw new ResourceAlreadyExistsException(
-                    String.format("User with email %s already exists", user.getEmail()));
+        if (!userRepository.existsById(userId)) {
+            throw new ResourceNotFoundException(String.format("User with id %d not found", userId));
         }
     }
 }
