@@ -15,8 +15,8 @@ import javax.validation.constraints.Positive;
 @Builder
 public class ItemDto {
     @Positive
-    private final Long id;
-    private final Long owner;
+    private Long id;
+    private Long owner;
     @NotBlank(message = "The name cannot be empty")
     private String name;
     @NotBlank(message = "The description cannot be empty")
