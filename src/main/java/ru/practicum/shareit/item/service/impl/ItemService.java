@@ -2,6 +2,10 @@ package ru.practicum.shareit.item.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.dto.BookingDtoOut;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
+import ru.practicum.shareit.booking.model.Status;
+import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.ResourceNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -11,6 +15,7 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.service.IItemService;
 import ru.practicum.shareit.user.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,13 +26,15 @@ public class ItemService implements IItemService {
     private final ItemMapper itemMapper;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final BookingRepository bookingRepository;
+    private final BookingMapper bookingMapper;
 
     @Override
     public ItemDto create(Long userId,
                           Item item) {
         throwIfUserNotFound(userId);
         item.setOwner(userId);
-        return itemMapper.toItemDto(itemRepository.save(item));
+        return itemMapper.toItemDtoWithoutBooking(itemRepository.save(item));
     }
 
     @Override
@@ -50,22 +57,51 @@ public class ItemService implements IItemService {
             existingItem.setAvailable(item.getAvailable());
         }
 
-        return itemMapper.toItemDto(itemRepository.save(existingItem));
+        return itemMapper.toItemDtoWithoutBooking(itemRepository.save(existingItem));
     }
 
     @Override
-    public ItemDto getById(Long itemId) {
-        return itemRepository.findById(itemId)
-                .map(itemMapper::toItemDto)
+    public ItemDto getById(Long itemId,
+                           Long userId) {
+        Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Item with id %d not found", itemId)));
+        if (item.getOwner()
+                .equals(userId)) {
+            BookingDtoOut lastBooking
+                    = bookingRepository.findFirstByItemOwnerAndItemIdAndStartIsBeforeAndStatusOrderByStartDesc(
+                            userId, itemId, LocalDateTime.now(), Status.APPROVED)
+                    .map(bookingMapper::toBookingDtoOut)
+                    .orElse(null);
+
+            BookingDtoOut nextBooking
+                    = bookingRepository.findFirstByItemOwnerAndItemIdAndStartIsAfterAndStatusOrderByStartAsc(
+                            userId, itemId, LocalDateTime.now(), Status.APPROVED)
+                    .map(bookingMapper::toBookingDtoOut)
+                    .orElse(null);
+            return itemMapper.toItemDtoWithBooking(item, lastBooking, nextBooking);
+        } else {
+            return itemMapper.toItemDtoWithoutBooking(item);
+        }
     }
 
     @Override
     public List<ItemDto> getAllOwnerItemsByOwnerId(Long ownerId) {
         return itemRepository.findAllByOwner(ownerId)
                 .stream()
-                .map(itemMapper::toItemDto)
+                .map(item -> {
+                    BookingDtoOut lastBooking
+                            = bookingRepository.findFirstByItemOwnerAndItemIdAndStartIsBeforeAndStatusOrderByStartDesc(
+                                    item.getOwner(), item.getId(), LocalDateTime.now(), Status.APPROVED)
+                            .map(bookingMapper::toBookingDtoOut)
+                            .orElse(null);
+                    BookingDtoOut nextBooking
+                            = bookingRepository.findFirstByItemOwnerAndItemIdAndStartIsAfterAndStatusOrderByStartAsc(
+                                    item.getOwner(), item.getId(), LocalDateTime.now(), Status.APPROVED)
+                            .map(bookingMapper::toBookingDtoOut)
+                            .orElse(null);
+                    return itemMapper.toItemDtoWithBooking(item, lastBooking, nextBooking);
+                })
                 .collect(Collectors.toList());
     }
 
@@ -76,7 +112,7 @@ public class ItemService implements IItemService {
         }
         return itemRepository.search(name)
                 .stream()
-                .map(itemMapper::toItemDto)
+                .map(itemMapper::toItemDtoWithoutBooking)
                 .collect(Collectors.toList());
     }
 

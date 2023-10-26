@@ -74,29 +74,31 @@ public class BookingService implements IBookingService {
                         .collect(Collectors.toList());
             case CURRENT:
                 return bookingRepository.findAllCurrentBookingsByBookerId(userId,
-                        LocalDateTime.now()).stream().map(bookingMapper::toBookingDtoOut).collect(
-                        Collectors.toList());
+                                LocalDateTime.now())
+                        .stream()
+                        .map(bookingMapper::toBookingDtoOut)
+                        .collect(Collectors.toList());
             case PAST:
                 return bookingRepository.findAllByBookerIdAndEndIsBeforeOrderByStartDesc(userId,
-                        LocalDateTime.now())
+                                LocalDateTime.now())
                         .stream()
                         .map(bookingMapper::toBookingDtoOut)
                         .collect(Collectors.toList());
             case FUTURE:
                 return bookingRepository.findAllByBookerIdAndStartIsAfterOrderByStartDesc(userId,
-                        LocalDateTime.now())
+                                LocalDateTime.now())
                         .stream()
                         .map(bookingMapper::toBookingDtoOut)
                         .collect(Collectors.toList());
             case WAITING:
                 return bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId,
-                        Status.WAITING)
+                                Status.WAITING)
                         .stream()
                         .map(bookingMapper::toBookingDtoOut)
                         .collect(Collectors.toList());
             case REJECTED:
                 return bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId,
-                        Status.REJECTED)
+                                Status.REJECTED)
                         .stream()
                         .map(bookingMapper::toBookingDtoOut)
                         .collect(Collectors.toList());
@@ -116,29 +118,31 @@ public class BookingService implements IBookingService {
                         .collect(Collectors.toList());
             case CURRENT:
                 return bookingRepository.findAllCurrentBookingsByItemOwner(userId,
-                        LocalDateTime.now()).stream().map(bookingMapper::toBookingDtoOut).collect(
-                        Collectors.toList());
+                                LocalDateTime.now())
+                        .stream()
+                        .map(bookingMapper::toBookingDtoOut)
+                        .collect(Collectors.toList());
             case PAST:
                 return bookingRepository.findAllByItemOwnerAndEndIsBeforeOrderByStartDesc(userId,
-                        LocalDateTime.now())
+                                LocalDateTime.now())
                         .stream()
                         .map(bookingMapper::toBookingDtoOut)
                         .collect(Collectors.toList());
             case FUTURE:
                 return bookingRepository.findAllByItemOwnerAndStartIsAfterOrderByStartDesc(userId,
-                        LocalDateTime.now())
+                                LocalDateTime.now())
                         .stream()
                         .map(bookingMapper::toBookingDtoOut)
                         .collect(Collectors.toList());
             case WAITING:
                 return bookingRepository.findAllByItemOwnerAndStatusOrderByStartDesc(userId,
-                        Status.WAITING)
+                                Status.WAITING)
                         .stream()
                         .map(bookingMapper::toBookingDtoOut)
                         .collect(Collectors.toList());
             case REJECTED:
                 return bookingRepository.findAllByItemOwnerAndStatusOrderByStartDesc(userId,
-                        Status.REJECTED)
+                                Status.REJECTED)
                         .stream()
                         .map(bookingMapper::toBookingDtoOut)
                         .collect(Collectors.toList());
@@ -151,11 +155,6 @@ public class BookingService implements IBookingService {
             throw new ResourceNotFoundException(
                     String.format("User with id %d does not exist", userId));
         }
-    }
-
-    private enum ValidationType {
-        UPDATE,
-        GET
     }
 
     private Booking validateBookingDetails(Long bookingId,
@@ -240,5 +239,10 @@ public class BookingService implements IBookingService {
         return bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Booking with id %d does not exist", bookingId)));
+    }
+
+    private enum ValidationType {
+        UPDATE,
+        GET
     }
 }

@@ -7,6 +7,7 @@ import ru.practicum.shareit.booking.model.Status;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     /*Получить все бронирования пользователя по id ALL*/
@@ -24,7 +25,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     /*Получить список бронирований для всех вещей текущего пользователя по id
      * на текущий момент CURRENT*/
     @Query("select b  FROM Booking b" + " JOIN fetch b.item i" + " join fetch b.booker bkr"
-            + " where i.owner.id = ?1 and ?2 BETWEEN b.start and b.end " + "order by b.start desc ")
+            + " where i.owner = ?1 and ?2 BETWEEN b.start and b.end " + "order by b.start desc ")
     List<Booking> findAllCurrentBookingsByItemOwner(Long userId,
                                                     LocalDateTime currentTime);
 
@@ -35,7 +36,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     /*Получить список бронирований для всех вещей текущего пользователя по id
      * на прошедший момент PAST*/
     List<Booking> findAllByItemOwnerAndEndIsBeforeOrderByStartDesc(Long userId,
-                                                   LocalDateTime currentDateTime);
+                                                                   LocalDateTime currentDateTime);
 
     /*Получить все бронирования пользователя по id будущие FUTURE*/
     List<Booking> findAllByBookerIdAndStartIsAfterOrderByStartDesc(Long userId,
@@ -55,5 +56,15 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findAllByItemOwnerAndStatusOrderByStartDesc(Long userId,
                                                               Status status);
 
+    /*Последнее  бронирование вещи по id*/
+    Optional<Booking> findFirstByItemOwnerAndItemIdAndStartIsBeforeAndStatusOrderByStartDesc(Long userId,
+                                                                                             Long itemId,
+                                                                                             LocalDateTime currentDateTime,
+                                                                                             Status status);
 
+    /*Следующее подтвержденное бронирование вещи по id*/
+    Optional<Booking> findFirstByItemOwnerAndItemIdAndStartIsAfterAndStatusOrderByStartAsc(Long userId,
+                                                                                           Long itemId,
+                                                                                           LocalDateTime currentDateTime,
+                                                                                           Status status);
 }

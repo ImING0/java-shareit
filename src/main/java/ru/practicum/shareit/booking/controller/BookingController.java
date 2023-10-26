@@ -27,15 +27,16 @@ public class BookingController {
 
     @PostMapping
     public ResponseEntity<BookingDtoOut> createBooking(@RequestHeader(requestHeader) Long userId,
-                                                       @RequestBody @Valid BookingDtoIn bookingDtoIn) {
+                                                       @RequestBody
+                                                       @Valid BookingDtoIn bookingDtoIn) {
         log.info("createBooking request: userId = {}, bookingDtoIn = {}", userId, bookingDtoIn);
         return ResponseEntity.ok(bookingService.create(userId, bookingDtoIn));
-
     }
 
     @PatchMapping("/{bookingId}")
     public ResponseEntity<BookingDtoOut> updateBooking(@PathVariable Long bookingId,
-                                                       @RequestParam(name = "approved") Boolean approved,
+                                                       @RequestParam(name = "approved")
+                                                       Boolean approved,
                                                        @RequestHeader(requestHeader) Long userId) {
         log.info("updateBooking request: bookingId = {}, approved = {}", bookingId, approved);
         return ResponseEntity.ok(bookingService.update(bookingId, approved, userId));
@@ -49,12 +50,13 @@ public class BookingController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BookingDtoOut>> getAllForCurrentUser(@RequestHeader(requestHeader) Long userId,
-                                                     @RequestParam(name = "state", defaultValue = "ALL") String state) {
+    public ResponseEntity<List<BookingDtoOut>> getAllForCurrentUser(
+            @RequestHeader(requestHeader) Long userId,
+            @RequestParam(name = "state", defaultValue = "ALL") String state) {
         log.info("getBookings request: userId = {}, state = {}", userId, state);
         try {
-            return ResponseEntity.ok(bookingService.getAllBookingsForCurrentUserId(userId,
-                    State.valueOf(state)));
+            return ResponseEntity.ok(
+                    bookingService.getAllBookingsForCurrentUserId(userId, State.valueOf(state)));
         } catch (IllegalArgumentException e) {
             throw new BadRequestException(String.format("Unknown state: %s", state));
         }
@@ -62,11 +64,12 @@ public class BookingController {
 
     @GetMapping("/owner")
     public ResponseEntity<?> getAllForOwner(@RequestHeader(requestHeader) Long userId,
-                                         @RequestParam(name = "state", defaultValue = "ALL") String state) {
+                                            @RequestParam(name = "state", defaultValue = "ALL")
+                                            String state) {
         log.info("getBookings request: userId = {}, state = {}", userId, state);
         try {
-            return ResponseEntity.ok(bookingService.getAllItemBookingsForOwnerId(userId, State.valueOf(state)));
-
+            return ResponseEntity.ok(
+                    bookingService.getAllItemBookingsForOwnerId(userId, State.valueOf(state)));
         } catch (IllegalArgumentException e) {
             throw new BadRequestException(String.format("Unknown state: %s", state));
         }

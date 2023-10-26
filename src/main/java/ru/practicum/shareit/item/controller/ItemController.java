@@ -43,9 +43,10 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ResponseEntity<ItemDto> getItemById(@PathVariable Long itemId) {
+    public ResponseEntity<ItemDto> getItemById(@PathVariable Long itemId,
+                                               @RequestHeader(requestHeader) Long userId) {
         log.info("getItemById request: itemId = {}", itemId);
-        return ResponseEntity.ok(itemService.getById(itemId));
+        return ResponseEntity.ok(itemService.getById(itemId, userId));
     }
 
     @GetMapping

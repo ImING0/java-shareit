@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import ru.practicum.shareit.booking.dto.BookingDtoOut;
 
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotBlank;
@@ -26,4 +27,6 @@ public class ItemDto {
     private Boolean available;
     private Long request; /*Ссылка на запрос другого пользователя
      (если вещь создана по запросу)*/
+    private BookingDtoOut lastBooking;
+    private BookingDtoOut nextBooking;
 }

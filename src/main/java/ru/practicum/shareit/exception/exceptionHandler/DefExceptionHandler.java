@@ -16,8 +16,6 @@ import ru.practicum.shareit.util.ErrorResponse;
 @RestControllerAdvice(basePackages = "ru.practicum.shareit")
 public class DefExceptionHandler {
 
-    // TODO: Добавить обработку всех возможных исключений (своих)
-
     @ExceptionHandler(BadRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequestException(BadRequestException ex) {
@@ -68,5 +66,4 @@ public class DefExceptionHandler {
                 .code(HttpStatus.FORBIDDEN.value())
                 .build();
     }
-
 }

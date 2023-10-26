@@ -11,8 +11,6 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
-import java.awt.print.Book;
-
 @Component
 @RequiredArgsConstructor
 public class BookingMapper {
@@ -24,7 +22,7 @@ public class BookingMapper {
                 .id(booking.getId())
                 .start(booking.getStart())
                 .end(booking.getEnd())
-                .item(itemMapper.toItemDto(booking.getItem()))
+                .item(itemMapper.toItemDtoWithoutBooking(booking.getItem()))
                 .booker(userMapper.toUserDto(booking.getBooker()))
                 .status(booking.getStatus())
                 .build();
@@ -41,6 +39,4 @@ public class BookingMapper {
                 .status(Status.WAITING)
                 .build();
     }
-
-
 }

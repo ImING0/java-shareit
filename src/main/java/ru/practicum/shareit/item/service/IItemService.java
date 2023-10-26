@@ -14,7 +14,8 @@ public interface IItemService {
                    Long itemId,
                    Item item);
 
-    ItemDto getById(Long itemId);
+    ItemDto getById(Long itemId,
+                    Long userId);
 
     List<ItemDto> getAllOwnerItemsByOwnerId(Long ownerId);
 

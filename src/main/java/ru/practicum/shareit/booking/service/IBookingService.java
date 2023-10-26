@@ -9,6 +9,7 @@ import java.util.List;
 public interface IBookingService {
     BookingDtoOut create(Long userId,
                          BookingDtoIn BookingDtoIn);
+
     BookingDtoOut update(Long bookingId,
                          Boolean approved,
                          Long userId);
@@ -18,6 +19,7 @@ public interface IBookingService {
 
     List<BookingDtoOut> getAllBookingsForCurrentUserId(Long userId,
                                                        State state);
+
     List<BookingDtoOut> getAllItemBookingsForOwnerId(Long userId,
                                                      State state);
 }
