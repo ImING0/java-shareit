@@ -8,6 +8,7 @@ import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import java.util.List;
 
 /**
  * TODO Sprint add-controllers.
@@ -29,4 +30,5 @@ public class ItemDto {
      (если вещь создана по запросу)*/
     private BookingDtoOut lastBooking;
     private BookingDtoOut nextBooking;
+    private List<CommentDtoOut> comments;
 }

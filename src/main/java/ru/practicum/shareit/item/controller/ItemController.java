@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDtoIn;
+import ru.practicum.shareit.item.dto.CommentDtoOut;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
@@ -47,6 +49,15 @@ public class ItemController {
                                                @RequestHeader(requestHeader) Long userId) {
         log.info("getItemById request: itemId = {}", itemId);
         return ResponseEntity.ok(itemService.getById(itemId, userId));
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public ResponseEntity<CommentDtoOut> addComment(@PathVariable Long itemId,
+                                                    @RequestHeader(requestHeader) Long userId,
+                                                    @RequestBody @Valid CommentDtoIn commentDtoIn) {
+        log.info("addComment request: itemId = {}, userId = {}, commentDtoIn = {}", itemId, userId,
+                commentDtoIn);
+        return ResponseEntity.ok(itemService.addComment(itemId, userId, commentDtoIn));
     }
 
     @GetMapping

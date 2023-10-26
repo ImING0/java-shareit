@@ -4,15 +4,22 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.ResourceNotFoundException;
+import ru.practicum.shareit.item.dto.CommentDtoIn;
+import ru.practicum.shareit.item.dto.CommentDtoOut;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.service.IItemService;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
@@ -28,6 +35,7 @@ public class ItemService implements IItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final BookingMapper bookingMapper;
+    private final CommentRepository commentRepository;
 
     @Override
     public ItemDto create(Long userId,
@@ -42,11 +50,9 @@ public class ItemService implements IItemService {
                           Long itemId,
                           Item item) {
         throwIfUserNotFound(userId);
-        throwIfItemNotFound(itemId);
         throwIfAllFieldsAreNull(item);
 
-        Item existingItem = itemRepository.findById(itemId)
-                .get();
+        Item existingItem = getItemOrThrow(itemId);
         if (item.getName() != null) {
             existingItem.setName(item.getName());
         }
@@ -56,16 +62,17 @@ public class ItemService implements IItemService {
         if (item.getAvailable() != null) {
             existingItem.setAvailable(item.getAvailable());
         }
-
         return itemMapper.toItemDtoWithoutBooking(itemRepository.save(existingItem));
     }
 
     @Override
     public ItemDto getById(Long itemId,
                            Long userId) {
-        Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Item with id %d not found", itemId)));
+        Item item = getItemOrThrow(itemId);
+        List<CommentDtoOut> comments = commentRepository.findAllByItemId(itemId)
+                .stream()
+                .map(CommentMapper::toCommentDtoOut)
+                .collect(Collectors.toList());
         if (item.getOwner()
                 .equals(userId)) {
             BookingDtoOut lastBooking
@@ -79,9 +86,9 @@ public class ItemService implements IItemService {
                             userId, itemId, LocalDateTime.now(), Status.APPROVED)
                     .map(bookingMapper::toBookingDtoOut)
                     .orElse(null);
-            return itemMapper.toItemDtoWithBooking(item, lastBooking, nextBooking);
+            return itemMapper.toItemDtoWithBooking(item, lastBooking, nextBooking, comments);
         } else {
-            return itemMapper.toItemDtoWithoutBooking(item);
+            return itemMapper.toItemDtoWithoutBooking(item, comments);
         }
     }
 
@@ -116,16 +123,44 @@ public class ItemService implements IItemService {
                 .collect(Collectors.toList());
     }
 
-    private void throwIfUserNotFound(Long userId) {
-        userRepository.findById(userId)
+    @Override
+    public CommentDtoOut addComment(Long itemId,
+                                    Long userId,
+                                    CommentDtoIn commentDtoIn) {
+        User user = getUserOrThrow(userId);
+        Item item = getItemOrThrow(itemId);
+        /*Сразу взяли все прошедшие брони*/
+        Booking booking = bookingRepository.findFirstByBookerIdAndItemIdAndEndIsBefore(userId, itemId, LocalDateTime.now())
+                .orElseThrow(() -> new BadRequestException("You can't comment on this item"));
+        return CommentMapper.toCommentDtoOut(commentRepository.save(Comment.builder().text(commentDtoIn.getText())
+                .author(user)
+                .item(item).created(LocalDateTime.now()).build()));
+    }
+
+    private User getUserOrThrow(Long userId) {
+        return userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("User with id %d not found", userId)));
     }
 
-    private void throwIfItemNotFound(Long itemId) {
-        itemRepository.findById(itemId)
+    private Item getItemOrThrow(Long itemId) {
+        return itemRepository.findById(itemId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Item with id %d not found", itemId)));
+    }
+
+    private void throwIfUserNotFound(Long userId) {
+        if(!userRepository.existsById(userId)) {
+            throw new ResourceNotFoundException(
+                    String.format("User with id %d not found", userId));
+        }
+    }
+
+    private void throwIfItemNotFound(Long itemId) {
+        if(!itemRepository.existsById(itemId)) {
+            throw new ResourceNotFoundException(
+                    String.format("Item with id %d not found", itemId));
+        }
     }
 
     private void throwIfAllFieldsAreNull(Item item) {
@@ -136,14 +171,4 @@ public class ItemService implements IItemService {
         }
     }
 
-    /*
-    private void throwIfNotOwner(Long userId,
-                                 Long itemId) {
-        if (!itemStorage.findById(itemId)
-                .get()
-                .getOwner()
-                .equals(userId)) {
-            throw new IllegalOwnerException("Item owner is not the same as user");
-        }
-    }*/
 }
