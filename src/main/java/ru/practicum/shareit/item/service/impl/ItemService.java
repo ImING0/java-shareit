@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
@@ -38,6 +39,7 @@ public class ItemService implements IItemService {
     private final CommentRepository commentRepository;
 
     @Override
+    @Transactional
     public ItemDto create(Long userId,
                           Item item) {
         throwIfUserNotFound(userId);
@@ -46,6 +48,7 @@ public class ItemService implements IItemService {
     }
 
     @Override
+    @Transactional
     public ItemDto update(Long userId,
                           Long itemId,
                           Item item) {
@@ -66,6 +69,7 @@ public class ItemService implements IItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ItemDto getById(Long itemId,
                            Long userId) {
         Item item = getItemOrThrow(itemId);
@@ -93,6 +97,7 @@ public class ItemService implements IItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemDto> getAllOwnerItemsByOwnerId(Long ownerId) {
         return itemRepository.findAllByOwner(ownerId)
                 .stream()
@@ -113,6 +118,7 @@ public class ItemService implements IItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemDto> search(String name) {
         if (name == null || name.isBlank()) {
             return List.of();
@@ -124,6 +130,7 @@ public class ItemService implements IItemService {
     }
 
     @Override
+    @Transactional
     public CommentDtoOut addComment(Long itemId,
                                     Long userId,
                                     CommentDtoIn commentDtoIn) {

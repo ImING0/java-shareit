@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDtoIn;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
@@ -35,6 +36,7 @@ public class BookingService implements IBookingService {
     private final ItemMapper itemMapper;
 
     @Override
+    @Transactional
     public BookingDtoOut create(Long userId,
                                 BookingDtoIn bookingDtoIn) {
         /*Не стал делать запросы в сервисы, потому что посчитал, что так будет быстрее, наджнее и
@@ -48,6 +50,7 @@ public class BookingService implements IBookingService {
     }
 
     @Override
+    @Transactional
     public BookingDtoOut update(Long bookingId,
                                 Boolean approved,
                                 Long userId) {
@@ -57,6 +60,7 @@ public class BookingService implements IBookingService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public BookingDtoOut getByBookingIdAndUserId(Long bookingId,
                                                  Long userId) {
         Booking booking = validateBookingDetails(bookingId, userId, ValidationType.GET);
@@ -64,6 +68,7 @@ public class BookingService implements IBookingService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BookingDtoOut> getAllBookingsForCurrentUserId(Long userId,
                                                               State state) {
         throwIfUserNotFound(userId);
@@ -108,6 +113,7 @@ public class BookingService implements IBookingService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BookingDtoOut> getAllItemBookingsForOwnerId(Long userId,
                                                             State state) {
         throwIfUserNotFound(userId);
@@ -193,8 +199,8 @@ public class BookingService implements IBookingService {
         return null;
     }
 
-    void validateBookingBeforeCreate(Long userId,
-                                     BookingDtoIn bookingDtoIn) {
+    private void validateBookingBeforeCreate(Long userId,
+                                             BookingDtoIn bookingDtoIn) {
         /*Пресекаем попытку бронирования недоступной вещи*/
         if (!getItemOrThrowIfNotExist(bookingDtoIn.getItemId()).getAvailable()) {
             throw new BadRequestException(
