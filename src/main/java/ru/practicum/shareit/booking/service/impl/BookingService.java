@@ -36,13 +36,13 @@ public class BookingService implements IBookingService {
 
     @Override
     public BookingDtoOut create(Long userId,
-                                BookingDtoIn bookingDtoIn) {
+                                BookingDtoIn BookingDtoIn) {
         /*Не стал делать запросы в сервисы, потому что посчитал, что так будет быстрее, наджнее и
          проще. Решил взаимодействовать напрямую с хранилищами.*/
         User user = getUserOrThrowIfNotExist(userId);
-        Item item = getItemOrThrowIfNotExist(bookingDtoIn.getItemId());
-        validateBookingBeforeCreate(userId, bookingDtoIn);
-        Booking booking = bookingMapper.toBooking(user, item, bookingDtoIn);
+        Item item = getItemOrThrowIfNotExist(BookingDtoIn.getItemId());
+        validateBookingBeforeCreate(userId, BookingDtoIn);
+        Booking booking = bookingMapper.toBooking(user, item, BookingDtoIn);
         booking.setStatus(Status.WAITING);
         return bookingMapper.toBookingDtoOut(bookingRepository.save(booking));
     }
