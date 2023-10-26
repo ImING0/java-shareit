@@ -22,6 +22,7 @@ public interface IItemService {
     List<ItemDto> getAllOwnerItemsByOwnerId(Long ownerId);
 
     List<ItemDto> search(String name);
+
     CommentDtoOut addComment(Long itemId,
                              Long userId,
                              CommentDtoIn commentDtoIn);

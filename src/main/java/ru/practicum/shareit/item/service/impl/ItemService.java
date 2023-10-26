@@ -130,11 +130,15 @@ public class ItemService implements IItemService {
         User user = getUserOrThrow(userId);
         Item item = getItemOrThrow(itemId);
         /*Сразу взяли все прошедшие брони*/
-        Booking booking = bookingRepository.findFirstByBookerIdAndItemIdAndEndIsBefore(userId, itemId, LocalDateTime.now())
+        Booking booking = bookingRepository.findFirstByBookerIdAndItemIdAndEndIsBefore(userId,
+                        itemId, LocalDateTime.now())
                 .orElseThrow(() -> new BadRequestException("You can't comment on this item"));
-        return CommentMapper.toCommentDtoOut(commentRepository.save(Comment.builder().text(commentDtoIn.getText())
+        return CommentMapper.toCommentDtoOut(commentRepository.save(Comment.builder()
+                .text(commentDtoIn.getText())
                 .author(user)
-                .item(item).created(LocalDateTime.now()).build()));
+                .item(item)
+                .created(LocalDateTime.now())
+                .build()));
     }
 
     private User getUserOrThrow(Long userId) {
@@ -150,16 +154,14 @@ public class ItemService implements IItemService {
     }
 
     private void throwIfUserNotFound(Long userId) {
-        if(!userRepository.existsById(userId)) {
-            throw new ResourceNotFoundException(
-                    String.format("User with id %d not found", userId));
+        if (!userRepository.existsById(userId)) {
+            throw new ResourceNotFoundException(String.format("User with id %d not found", userId));
         }
     }
 
     private void throwIfItemNotFound(Long itemId) {
-        if(!itemRepository.existsById(itemId)) {
-            throw new ResourceNotFoundException(
-                    String.format("Item with id %d not found", itemId));
+        if (!itemRepository.existsById(itemId)) {
+            throw new ResourceNotFoundException(String.format("Item with id %d not found", itemId));
         }
     }
 
@@ -170,5 +172,4 @@ public class ItemService implements IItemService {
                     "Item name, description, availability and request must be not null");
         }
     }
-
 }

@@ -21,7 +21,8 @@ public class ItemMapper {
                 .build();
     }
 
-    public ItemDto toItemDtoWithoutBooking(Item item, List<CommentDtoOut> comments) {
+    public ItemDto toItemDtoWithoutBooking(Item item,
+                                           List<CommentDtoOut> comments) {
         return ItemDto.builder()
                 .id(item.getId())
                 .owner(item.getOwner())
@@ -48,7 +49,8 @@ public class ItemMapper {
 
     public ItemDto toItemDtoWithBooking(Item item,
                                         BookingDtoOut lastBooking,
-                                        BookingDtoOut nextBooking, List<CommentDtoOut> comments) {
+                                        BookingDtoOut nextBooking,
+                                        List<CommentDtoOut> comments) {
         return ItemDto.builder()
                 .id(item.getId())
                 .owner(item.getOwner())
