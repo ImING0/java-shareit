@@ -44,7 +44,7 @@ public class ItemService implements IItemService {
                           Item item) {
         throwIfUserNotFound(userId);
         item.setOwner(userId);
-        return itemMapper.toItemDtoWithoutBooking(itemRepository.save(item));
+        return itemMapper.toItemDto(itemRepository.save(item));
     }
 
     @Override
@@ -65,7 +65,7 @@ public class ItemService implements IItemService {
         if (item.getAvailable() != null) {
             existingItem.setAvailable(item.getAvailable());
         }
-        return itemMapper.toItemDtoWithoutBooking(itemRepository.save(existingItem));
+        return itemMapper.toItemDto(itemRepository.save(existingItem));
     }
 
     @Override
@@ -73,27 +73,10 @@ public class ItemService implements IItemService {
     public ItemDto getById(Long itemId,
                            Long userId) {
         Item item = getItemOrThrow(itemId);
-        List<CommentDtoOut> comments = commentRepository.findAllByItemId(itemId)
-                .stream()
-                .map(CommentMapper::toCommentDtoOut)
-                .collect(Collectors.toList());
-        if (item.getOwner()
-                .equals(userId)) {
-            BookingDtoOut lastBooking
-                    = bookingRepository.findFirstByItemOwnerAndItemIdAndStartIsBeforeAndStatusOrderByStartDesc(
-                            userId, itemId, LocalDateTime.now(), Status.APPROVED)
-                    .map(bookingMapper::toBookingDtoOut)
-                    .orElse(null);
-
-            BookingDtoOut nextBooking
-                    = bookingRepository.findFirstByItemOwnerAndItemIdAndStartIsAfterAndStatusOrderByStartAsc(
-                            userId, itemId, LocalDateTime.now(), Status.APPROVED)
-                    .map(bookingMapper::toBookingDtoOut)
-                    .orElse(null);
-            return itemMapper.toItemDtoWithBooking(item, lastBooking, nextBooking, comments);
-        } else {
-            return itemMapper.toItemDtoWithoutBooking(item, comments);
-        }
+        ItemDto itemDto = itemMapper.toItemDto(item);
+        setBookings(itemDto, userId);
+        setComments(itemDto);
+        return itemDto;
     }
 
     @Override
@@ -102,17 +85,10 @@ public class ItemService implements IItemService {
         return itemRepository.findAllByOwner(ownerId)
                 .stream()
                 .map(item -> {
-                    BookingDtoOut lastBooking
-                            = bookingRepository.findFirstByItemOwnerAndItemIdAndStartIsBeforeAndStatusOrderByStartDesc(
-                                    item.getOwner(), item.getId(), LocalDateTime.now(), Status.APPROVED)
-                            .map(bookingMapper::toBookingDtoOut)
-                            .orElse(null);
-                    BookingDtoOut nextBooking
-                            = bookingRepository.findFirstByItemOwnerAndItemIdAndStartIsAfterAndStatusOrderByStartAsc(
-                                    item.getOwner(), item.getId(), LocalDateTime.now(), Status.APPROVED)
-                            .map(bookingMapper::toBookingDtoOut)
-                            .orElse(null);
-                    return itemMapper.toItemDtoWithBooking(item, lastBooking, nextBooking);
+                    ItemDto itemDto = itemMapper.toItemDto(item);
+                    setBookings(itemDto, ownerId);
+                    setComments(itemDto);
+                    return itemDto;
                 })
                 .collect(Collectors.toList());
     }
@@ -125,7 +101,7 @@ public class ItemService implements IItemService {
         }
         return itemRepository.search(name)
                 .stream()
-                .map(itemMapper::toItemDtoWithoutBooking)
+                .map(itemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
 
@@ -146,6 +122,33 @@ public class ItemService implements IItemService {
                 .item(item)
                 .created(LocalDateTime.now())
                 .build()));
+    }
+
+    void setBookings(ItemDto itemDto,
+                     Long userId) {
+        if (itemDto.getOwner()
+                .equals(userId)) {
+            BookingDtoOut lastBooking
+                    = bookingRepository.findFirstByItemOwnerAndItemIdAndStartIsBeforeAndStatusOrderByStartDesc(
+                            userId, itemDto.getId(), LocalDateTime.now(), Status.APPROVED)
+                    .map(bookingMapper::toBookingDtoOut)
+                    .orElse(null);
+            BookingDtoOut nextBooking
+                    = bookingRepository.findFirstByItemOwnerAndItemIdAndStartIsAfterAndStatusOrderByStartAsc(
+                            userId, itemDto.getId(), LocalDateTime.now(), Status.APPROVED)
+                    .map(bookingMapper::toBookingDtoOut)
+                    .orElse(null);
+            itemDto.setLastBooking(lastBooking);
+            itemDto.setNextBooking(nextBooking);
+        }
+    }
+
+    void setComments(ItemDto itemDto) {
+        List<CommentDtoOut> comments = commentRepository.findAllByItemId(itemDto.getId())
+                .stream()
+                .map(CommentMapper::toCommentDtoOut)
+                .collect(Collectors.toList());
+        itemDto.setComments(comments);
     }
 
     private User getUserOrThrow(Long userId) {

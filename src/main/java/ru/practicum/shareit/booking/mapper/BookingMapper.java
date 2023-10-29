@@ -21,7 +21,7 @@ public class BookingMapper {
                 .id(booking.getId())
                 .start(booking.getStart())
                 .end(booking.getEnd())
-                .item(itemMapper.toItemDtoWithoutBooking(booking.getItem()))
+                .item(itemMapper.toItemDto(booking.getItem()))
                 .booker(userMapper.toUserDto(booking.getBooker()))
                 .status(booking.getStatus())
                 .build();
