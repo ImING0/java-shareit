@@ -47,7 +47,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
      * @param currentTime текущее время
      * @return список бронирований
      */
-    @Query("select b  FROM Booking b" + " JOIN fetch b.item i" + " join fetch b.booker bkr"
+    @Query("SELECT b  FROM Booking b" + " JOIN fetch b.item i" + " join fetch b.booker bkr"
             + " where bkr.id = ?1 and ?2 BETWEEN b.start and b.end " + "order by b.start desc ")
     List<Booking> findAllCurrentBookingsByBookerId(Long userId,
                                                    LocalDateTime currentTime);
@@ -60,7 +60,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
      * @param currentTime
      * @return
      */
-    @Query("select b  FROM Booking b" + " JOIN fetch b.item i" + " join fetch b.booker bkr"
+    @Query("SELECT b  FROM Booking b" + " JOIN fetch b.item i" + " join fetch b.booker bkr"
             + " where i.owner = ?1 and ?2 BETWEEN b.start and b.end " + "order by b.start desc ")
     List<Booking> findAllCurrentBookingsByItemOwner(Long userId,
                                                     LocalDateTime currentTime);
