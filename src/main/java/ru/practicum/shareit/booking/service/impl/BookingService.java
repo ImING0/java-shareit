@@ -13,10 +13,8 @@ import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.service.IBookingService;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.ResourceNotFoundException;
-import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -32,14 +30,13 @@ public class BookingService implements IBookingService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
     private final BookingMapper bookingMapper;
-    private final UserMapper userMapper;
-    private final ItemMapper itemMapper;
 
     @Override
     @Transactional
     public BookingDtoOut create(Long userId,
                                 BookingDtoIn bookingDtoIn) {
-        /*Не стал делать запросы в сервисы, потому что посчитал, что так будет быстрее, наджнее и
+        /*Не стал делать запросы в сервисы, потому что посчитал, что так будет быстрее,
+         надежнее и
          проще. Решил взаимодействовать напрямую с хранилищами.*/
         User user = getUserOrThrowIfNotExist(userId);
         Item item = getItemOrThrowIfNotExist(bookingDtoIn.getItemId());
@@ -61,8 +58,8 @@ public class BookingService implements IBookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public BookingDtoOut getByBookingIdAndUserId(Long bookingId,
-                                                 Long userId) {
+    public BookingDtoOut getBookingById(Long bookingId,
+                                        Long userId) {
         Booking booking = validateBookingDetails(bookingId, userId, ValidationType.GET);
         return bookingMapper.toBookingDtoOut(booking);
     }

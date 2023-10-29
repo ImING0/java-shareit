@@ -15,12 +15,33 @@ public interface IBookingService {
                          Boolean approved,
                          Long userId);
 
-    BookingDtoOut getByBookingIdAndUserId(Long bookingId,
-                                          Long userId);
+    /**
+     * Получить бронирование по его id
+     *
+     * @param bookingId id бронирования
+     * @param userId    id пользователя
+     * @return
+     */
+    BookingDtoOut getBookingById(Long bookingId,
+                                 Long userId);
 
+    /**
+     * Получить все бронирования для текущего пользователя по его id
+     *
+     * @param userId id пользователя
+     * @param state  статус бронирования
+     * @return список бронирований
+     */
     List<BookingDtoOut> getAllBookingsForCurrentUserId(Long userId,
                                                        State state);
 
+    /**
+     * Получить список бронирований для всех вещей текущего пользователя (их владельца)
+     *
+     * @param userId id владельца вещей
+     * @param state  статус бронирования
+     * @return список бронирований
+     */
     List<BookingDtoOut> getAllItemBookingsForOwnerId(Long userId,
                                                      State state);
 }

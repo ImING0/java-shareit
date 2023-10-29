@@ -46,7 +46,7 @@ public class BookingController {
     public ResponseEntity<BookingDtoOut> getBooking(@PathVariable Long bookingId,
                                                     @RequestHeader(requestHeader) Long userId) {
         log.info("getBooking request: bookingId = {}", bookingId);
-        return ResponseEntity.ok(bookingService.getByBookingIdAndUserId(bookingId, userId));
+        return ResponseEntity.ok(bookingService.getBookingById(bookingId, userId));
     }
 
     @GetMapping
