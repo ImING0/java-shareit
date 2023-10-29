@@ -8,7 +8,6 @@ import ru.practicum.shareit.booking.dto.BookingDtoIn;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
 import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.service.IBookingService;
-import ru.practicum.shareit.exception.BadRequestException;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -54,12 +53,8 @@ public class BookingController {
             @RequestHeader(requestHeader) Long userId,
             @RequestParam(name = "state", defaultValue = "ALL") String state) {
         log.info("getBookings request: userId = {}, state = {}", userId, state);
-        try {
-            return ResponseEntity.ok(
-                    bookingService.getAllBookingsForCurrentUserId(userId, State.valueOf(state)));
-        } catch (IllegalArgumentException e) {
-            throw new BadRequestException(String.format("Unknown state: %s", state));
-        }
+        return ResponseEntity.ok(
+                bookingService.getAllBookingsForCurrentUserId(userId, State.fromString(state)));
     }
 
     @GetMapping("/owner")
@@ -67,12 +62,8 @@ public class BookingController {
                                             @RequestParam(name = "state", defaultValue = "ALL")
                                             String state) {
         log.info("getBookings request: userId = {}, state = {}", userId, state);
-        try {
-            return ResponseEntity.ok(
-                    bookingService.getAllItemBookingsForOwnerId(userId, State.valueOf(state)));
-        } catch (IllegalArgumentException e) {
-            throw new BadRequestException(String.format("Unknown state: %s", state));
-        }
+        return ResponseEntity.ok(
+                bookingService.getAllItemBookingsForOwnerId(userId, State.fromString(state)));
     }
 }
 
