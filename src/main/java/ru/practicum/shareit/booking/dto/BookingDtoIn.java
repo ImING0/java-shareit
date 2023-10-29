@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import ru.practicum.shareit.booking.model.Status;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
@@ -19,4 +20,5 @@ public class BookingDtoIn {
     @NotNull(message = "end must not be null")
     @Future
     private LocalDateTime end;
+    private Status status;
 }

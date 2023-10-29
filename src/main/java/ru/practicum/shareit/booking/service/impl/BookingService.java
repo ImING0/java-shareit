@@ -41,8 +41,8 @@ public class BookingService implements IBookingService {
         User user = getUserOrThrowIfNotExist(userId);
         Item item = getItemOrThrowIfNotExist(bookingDtoIn.getItemId());
         validateBookingBeforeCreate(userId, bookingDtoIn);
+        bookingDtoIn.setStatus(Status.WAITING);
         Booking booking = bookingMapper.toBooking(user, item, bookingDtoIn);
-        booking.setStatus(Status.WAITING);
         return bookingMapper.toBookingDtoOut(bookingRepository.save(booking));
     }
 
