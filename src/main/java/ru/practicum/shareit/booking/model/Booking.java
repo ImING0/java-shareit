@@ -33,10 +33,6 @@ public class Booking {
     @JoinColumn(name = "booker_id", nullable = false)
     private User booker;
     @Column(name = "status", nullable = false)
-    /* , columnDefinition = "ENUM DEFAULT 'WAITING'"*/
-    /*Тыкался я мыкался, хотел сделать, чтобы отсюда сразу шла вставка по дефолту
-     * убил кучу времени но ничего не получилось и пришлось уже в сервисе передавать значение
-     * может подскажете способ?*/
     @Enumerated(EnumType.STRING)
     private Status status;
 }
