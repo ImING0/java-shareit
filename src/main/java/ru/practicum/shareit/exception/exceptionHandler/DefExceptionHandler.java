@@ -6,6 +6,7 @@ import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.IllegalOwnerException;
 import ru.practicum.shareit.exception.ResourceAlreadyExistsException;
 import ru.practicum.shareit.exception.ResourceNotFoundException;
@@ -14,6 +15,18 @@ import ru.practicum.shareit.util.ErrorResponse;
 @Slf4j
 @RestControllerAdvice(basePackages = "ru.practicum.shareit")
 public class DefExceptionHandler {
+
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleBadRequestException(BadRequestException ex) {
+        log.error("Bad request", ex);
+        return ErrorResponse.builder()
+                .error(ex.getMessage())
+                .message(ex.getMessage())
+                .code(HttpStatus.BAD_REQUEST.value())
+                .build();
+    }
+
     @ExceptionHandler(MissingRequestHeaderException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMissingRequestHeaderException(MissingRequestHeaderException ex) {

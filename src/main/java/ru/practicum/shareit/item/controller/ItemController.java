@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDtoIn;
+import ru.practicum.shareit.item.dto.CommentDtoOut;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
@@ -42,19 +44,20 @@ public class ItemController {
         return ResponseEntity.ok(itemService.update(userId, itemId, item));
     }
 
-    @DeleteMapping("/{itemId}")
-    public ResponseEntity<Void> deleteItem(@RequestHeader(requestHeader) Long userId,
-                                           @PathVariable Long itemId) {
-        itemService.delete(userId, itemId);
-        log.info("deleteItem request: userId = {}, itemId = {}", userId, itemId);
-        return ResponseEntity.ok()
-                .build();
+    @GetMapping("/{itemId}")
+    public ResponseEntity<ItemDto> getItemById(@PathVariable Long itemId,
+                                               @RequestHeader(requestHeader) Long userId) {
+        log.info("getItemById request: itemId = {}", itemId);
+        return ResponseEntity.ok(itemService.getById(itemId, userId));
     }
 
-    @GetMapping("/{itemId}")
-    public ResponseEntity<ItemDto> getItemById(@PathVariable Long itemId) {
-        log.info("getItemById request: itemId = {}", itemId);
-        return ResponseEntity.ok(itemService.getById(itemId));
+    @PostMapping("/{itemId}/comment")
+    public ResponseEntity<CommentDtoOut> addComment(@PathVariable Long itemId,
+                                                    @RequestHeader(requestHeader) Long userId,
+                                                    @RequestBody @Valid CommentDtoIn commentDtoIn) {
+        log.info("addComment request: itemId = {}, userId = {}, commentDtoIn = {}", itemId, userId,
+                commentDtoIn);
+        return ResponseEntity.ok(itemService.addComment(itemId, userId, commentDtoIn));
     }
 
     @GetMapping
