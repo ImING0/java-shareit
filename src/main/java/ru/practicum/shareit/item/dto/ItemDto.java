@@ -26,7 +26,7 @@ public class ItemDto {
     @AssertTrue(message = "The item must be available for booking")
     @NotNull(message = "The availability cannot be null")
     private Boolean available;
-    private Long request; /*Ссылка на запрос другого пользователя
+    private Long requestId; /*Ссылка на запрос другого пользователя
      (если вещь создана по запросу)*/
     private BookingDtoOut lastBooking;
     private BookingDtoOut nextBooking;

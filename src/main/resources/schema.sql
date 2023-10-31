@@ -2,6 +2,7 @@ drop table if exists USERS cascade;
 drop table if exists ITEMS cascade;
 drop table if exists BOOKINGS cascade;
 drop table if exists COMMENTS cascade;
+drop table if exists REQUESTS cascade;
 
 
 create table USERS
@@ -65,3 +66,16 @@ create table BOOKINGS
         foreign key (ITEM_ID) references ITEMS
             on update cascade on delete cascade
 );
+
+create table REQUESTS
+(
+    ID          BIGINT auto_increment,
+    DESCRIPTION VARCHAR(400)                not null,
+    REQUESTOR_ID   BIGINT                      not null,
+    CREATED     TIMESTAMP WITHOUT TIME ZONE not null,
+    constraint "REQUESTS_ID_pk"
+        primary key (ID),
+    constraint "REQUESTS_REQUESTOR_ID_fk"
+        foreign key (REQUESTOR_ID) references USERS
+);
+
