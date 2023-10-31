@@ -9,6 +9,7 @@ import ru.practicum.shareit.request.dto.ItemRequestDtoOut;
 import ru.practicum.shareit.request.service.IItemRequestService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
@@ -75,8 +76,8 @@ public class ItemRequestController {
      */
     @GetMapping("/all")
     public ResponseEntity<List<ItemRequestDtoOut>> getAllRequests(
-            @RequestParam(name = "from", defaultValue = "0") Integer from,
-            @RequestParam(name = "size", defaultValue = "10") Integer size,
+            @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
+            @RequestParam(name = "size", defaultValue = "10") @PositiveOrZero Integer size,
             @RequestHeader(name = requestHeader) Long userId) {
         return ResponseEntity.ok(itemRequestService.getAllFromOthers(userId, from, size));
     }

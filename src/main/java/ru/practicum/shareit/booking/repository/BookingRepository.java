@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.repository;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.practicum.shareit.booking.model.Booking;
@@ -29,7 +30,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
      * @param userId id пользователя
      * @return список бронирований
      */
-    List<Booking> findAllByBookerIdOrderByStartDesc(Long userId);
+    List<Booking> findAllByBookerIdOrderByStartDesc(Long userId,
+                                                    Pageable pageable);
 
     /**
      * Получить список бронирований для всех вещей текущего пользователя по id
@@ -38,7 +40,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
      * @param userId id пользователя
      * @return список бронирований
      */
-    List<Booking> findAllByItemOwnerOrderByStartDesc(Long userId);
+    List<Booking> findAllByItemOwnerOrderByStartDesc(Long userId,
+                                                     Pageable pageable);
 
     /**
      * Получить все бронирования пользователя по id на текущий момент - CURRENT
@@ -50,7 +53,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("SELECT b  FROM Booking b" + " JOIN fetch b.item i" + " join fetch b.booker bkr"
             + " where bkr.id = ?1 and ?2 BETWEEN b.start and b.end " + "order by b.start desc ")
     List<Booking> findAllCurrentBookingsByBookerId(Long userId,
-                                                   LocalDateTime currentTime);
+                                                   LocalDateTime currentTime,
+                                                   Pageable pageable);
 
     /**
      * Получить список бронирований для всех вещей текущего пользователя по id
@@ -63,7 +67,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("SELECT b  FROM Booking b" + " JOIN fetch b.item i" + " join fetch b.booker bkr"
             + " where i.owner = ?1 and ?2 BETWEEN b.start and b.end " + "order by b.start desc ")
     List<Booking> findAllCurrentBookingsByItemOwner(Long userId,
-                                                    LocalDateTime currentTime);
+                                                    LocalDateTime currentTime,
+                                                    Pageable pageable);
 
     /**
      * Получить все бронирования пользователя по id (завершенные) - PAST
@@ -73,7 +78,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
      * @return список бронирований
      */
     List<Booking> findAllByBookerIdAndEndIsBeforeOrderByStartDesc(Long userId,
-                                                                  LocalDateTime currentDateTime);
+                                                                  LocalDateTime currentDateTime,
+                                                                  Pageable pageable);
 
     /**
      * Получить список бронирований для всех вещей текущего пользователя по id
@@ -84,7 +90,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
      * @return список бронирований
      */
     List<Booking> findAllByItemOwnerAndEndIsBeforeOrderByStartDesc(Long userId,
-                                                                   LocalDateTime currentDateTime);
+                                                                   LocalDateTime currentDateTime,
+                                                                   Pageable pageable);
 
     /**
      * Получить все бронирования пользователя по id будущие - FUTURE
@@ -94,7 +101,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
      * @return список бронирований
      */
     List<Booking> findAllByBookerIdAndStartIsAfterOrderByStartDesc(Long userId,
-                                                                   LocalDateTime currentDateTime);
+                                                                   LocalDateTime currentDateTime,
+                                                                   Pageable pageable);
 
     /**
      * Получить список бронирований для всех вещей текущего пользователя по id
@@ -105,7 +113,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
      * @return список бронирований
      */
     List<Booking> findAllByItemOwnerAndStartIsAfterOrderByStartDesc(Long userId,
-                                                                    LocalDateTime currentDateTime);
+                                                                    LocalDateTime currentDateTime,
+                                                                    Pageable pageable);
 
     /**
      * Получить все бронирования пользователя по id по статусу
@@ -115,7 +124,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
      * @return список бронирований
      */
     List<Booking> findAllByBookerIdAndStatusOrderByStartDesc(Long userId,
-                                                             Status status);
+                                                             Status status,
+                                                             Pageable pageable);
 
     /**
      * Получить список бронирований для всех вещей текущего пользователя по id
@@ -126,7 +136,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
      * @return список бронирований
      */
     List<Booking> findAllByItemOwnerAndStatusOrderByStartDesc(Long userId,
-                                                              Status status);
+                                                              Status status,
+                                                              Pageable pageable);
 
     /**
      * Последнее бронирование вещи по id

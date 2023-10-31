@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
@@ -22,6 +23,7 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.service.IItemService;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.util.OffsetBasedPageRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -81,8 +83,11 @@ public class ItemService implements IItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ItemDto> getAllOwnerItemsByOwnerId(Long ownerId) {
-        return itemRepository.findAllByOwner(ownerId)
+    public List<ItemDto> getAllOwnerItemsByOwnerId(Long ownerId,
+                                                   Integer from,
+                                                   Integer size) {
+        Pageable pageable = new OffsetBasedPageRequest(from, size);
+        return itemRepository.findAllByOwner(ownerId, pageable)
                 .stream()
                 .map(item -> {
                     ItemDto itemDto = itemMapper.toItemDto(item);
@@ -95,11 +100,14 @@ public class ItemService implements IItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ItemDto> search(String name) {
+    public List<ItemDto> search(String name,
+                                Integer from,
+                                Integer size) {
         if (name == null || name.isBlank()) {
             return List.of();
         }
-        return itemRepository.search(name)
+        Pageable pageable = new OffsetBasedPageRequest(from, size);
+        return itemRepository.search(name, pageable)
                 .stream()
                 .map(itemMapper::toItemDto)
                 .collect(Collectors.toList());

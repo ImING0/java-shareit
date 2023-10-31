@@ -12,6 +12,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.IItemService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
@@ -62,15 +63,22 @@ public class ItemController {
 
     @GetMapping
     public ResponseEntity<List<ItemDto>> getAllOwnerItemsByOwnerId(
-            @RequestHeader(requestHeader) Long ownerId) {
+            @RequestHeader(requestHeader) Long ownerId,
+            @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
+            @RequestParam(name = "size", defaultValue = "10") @PositiveOrZero Integer size) {
         log.info("getAllOwnerItemsByOwnerId request: ownerId = {}", ownerId);
-        return ResponseEntity.ok(itemService.getAllOwnerItemsByOwnerId(ownerId));
+        return ResponseEntity.ok(itemService.getAllOwnerItemsByOwnerId(ownerId, from, size));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<ItemDto>> searchItem(@RequestParam("text") String text) {
+    public ResponseEntity<List<ItemDto>> searchItem(@RequestParam("text") String text,
+                                                    @RequestParam(name = "from", defaultValue = "0")
+                                                    @PositiveOrZero Integer from,
+                                                    @RequestParam(name = "size",
+                                                            defaultValue = "10")
+                                                    @PositiveOrZero Integer size) {
         log.info("searchItem request: text = {}", text);
-        return ResponseEntity.ok(itemService.search(text));
+        return ResponseEntity.ok(itemService.search(text, from, size));
     }
 }
 
