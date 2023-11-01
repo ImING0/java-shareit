@@ -2,6 +2,8 @@ package ru.practicum.shareit.user.service.impl;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -19,45 +21,58 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
-    /*@Mock
+    @Mock
     private UserRepository userRepository;
     @Mock
     private UserMapper userMapper;
     @InjectMocks
     private UserService userService;
-
-    private final UserDto userDto = UserDto.builder().id(1L)
-            .name("Alex")
-            .email("firstUser@gmail.com")
-            .build();
+    @Captor
+    private ArgumentCaptor<User> userArgumentCaptor;
 
     @Test
-    void createUserWithValidDataAndReturnDto() {
-        // допиши тест, который проверяет создание пользователя
-        User userToSave = User.builder().id(1L)
+    void create_WhenValid_ReturnUserDto() {
+        UserDto userToSave = UserDto.builder()
+                .id(1L)
                 .name("Alex")
                 .email("firstUser@gmail.com")
                 .build();
-        when(userRepository.save(userToSave)).thenReturn(userToSave);
-        when(userMapper.toUserDto(userToSave)).thenReturn(userDto);
+        User userSaved = User.builder()
+                .id(1L)
+                .name("Alex")
+                .email("firstUser@gmail.com")
+                .build();
+        when(userMapper.toUser(userToSave)).thenReturn(userSaved);
+        when(userRepository.save(userSaved)).thenReturn(userSaved);
+        when(userMapper.toUserDto(userSaved)).thenReturn(userToSave);
 
         UserDto userDtoOut = userService.create(userToSave);
-        assertEquals(userDto, userDtoOut);
-        verify(userRepository).save(userToSave);
+        assertEquals(userToSave, userDtoOut);
+        verify(userRepository).save(userSaved);
     }
 
     @Test
     void update_WhenDataValid_ReturnUpdatedUserDto() {
         Long userId = 1L;
-        User existingUser = new User();
-        User userForUpdate = new User();
+        User existingUser = User.builder()
+                .id(1L)
+                .name("Alex")
+                .email("alex@gmail.com")
+                .build();
+        UserDto userToUpdate = UserDto.builder()
+                .id(1L)
+                .name("Alex Positive")
+                .email("alexPositive@gmail.com").build();
+        when(userRepository.existsById(userId)).thenReturn(true);
         when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
-        when(userRepository.save(existingUser)).thenReturn(userForUpdate);
-        when(userMapper.toUserDto(existingUser)).thenReturn(userMapper.toUserDto(userForUpdate));
+        userService.update(userId, userToUpdate);
+        verify(userRepository).save(userArgumentCaptor.capture());
+        User updatedUser = userArgumentCaptor.getValue();
 
-        UserDto userDtoOut = userService.update(userId, userForUpdate);
-
-    }*/
+        assertEquals(userToUpdate.getId(), updatedUser.getId());
+        assertEquals(userToUpdate.getName(), updatedUser.getName());
+        assertEquals(userToUpdate.getEmail(), updatedUser.getEmail());
+    }
 
     @Test
     void delete() {

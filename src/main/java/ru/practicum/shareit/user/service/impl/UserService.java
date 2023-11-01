@@ -30,9 +30,7 @@ public class UserService implements IUserService {
     @Transactional
     public UserDto update(Long userId,
                           UserDto userDto) {
-        throwIfUserNotFoundException(userId);
-        User existingUser = userRepository.findById(userId)
-                .get();
+        User existingUser = findByIdOrThrow(userId);
         if (userDto.getName() != null && !userDto.getName()
                 .isBlank()) {
             existingUser.setName(userDto.getName());
@@ -54,9 +52,8 @@ public class UserService implements IUserService {
     @Override
     @Transactional(readOnly = true)
     public UserDto getById(Long userId) {
-        return userMapper.toUserDto(userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("User with id %d not found", userId))));
+        User user = findByIdOrThrow(userId);
+        return userMapper.toUserDto(user);
     }
 
     @Override
@@ -68,9 +65,9 @@ public class UserService implements IUserService {
                 .collect(Collectors.toList());
     }
 
-    private void throwIfUserNotFoundException(Long userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new ResourceNotFoundException(String.format("User with id %d not found", userId));
-        }
+    private User findByIdOrThrow(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("User with id %d not found", userId)));
     }
 }
