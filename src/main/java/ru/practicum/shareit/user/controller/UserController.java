@@ -23,17 +23,15 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
-        User user = userMapper.toUser(userDto);
-        log.info("createUser request: user = {}", user);
-        return ResponseEntity.ok(userService.create(user));
+        log.info("createUser request: user = {}", userDto);
+        return ResponseEntity.ok(userService.create(userDto));
     }
 
     @PatchMapping("/{userId}")
     public ResponseEntity<UserDto> updateUser(@PathVariable("userId") Long userId,
                                               @RequestBody UserDto userDto) {
-        User user = userMapper.toUser(userDto);
-        log.info("updateUser request: userId = {}, user = {}", userId, user);
-        return ResponseEntity.ok(userService.update(userId, user));
+        log.info("updateUser request: userId = {}, user = {}", userId, userDto);
+        return ResponseEntity.ok(userService.update(userId, userDto));
     }
 
     @DeleteMapping("/{userId}")
