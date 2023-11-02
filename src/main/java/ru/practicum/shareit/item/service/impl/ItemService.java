@@ -43,29 +43,29 @@ public class ItemService implements IItemService {
     @Override
     @Transactional
     public ItemDto create(Long userId,
-                          Item item) {
+                          ItemDto itemDto) {
         throwIfUserNotFound(userId);
-        item.setOwner(userId);
-        return itemMapper.toItemDto(itemRepository.save(item));
+        itemDto.setOwner(userId);
+        return itemMapper.toItemDto(itemRepository.save(itemMapper.toItem(itemDto)));
     }
 
     @Override
     @Transactional
     public ItemDto update(Long userId,
                           Long itemId,
-                          Item item) {
+                          ItemDto itemDto) {
         throwIfUserNotFound(userId);
-        throwIfAllFieldsAreNull(item);
+        throwIfAllFieldsAreNull(itemDto);
 
         Item existingItem = getItemOrThrow(itemId);
-        if (item.getName() != null) {
-            existingItem.setName(item.getName());
+        if (itemDto.getName() != null) {
+            existingItem.setName(itemDto.getName());
         }
-        if (item.getDescription() != null) {
-            existingItem.setDescription(item.getDescription());
+        if (itemDto.getDescription() != null) {
+            existingItem.setDescription(itemDto.getDescription());
         }
-        if (item.getAvailable() != null) {
-            existingItem.setAvailable(item.getAvailable());
+        if (itemDto.getAvailable() != null) {
+            existingItem.setAvailable(itemDto.getAvailable());
         }
         return itemMapper.toItemDto(itemRepository.save(existingItem));
     }
@@ -132,8 +132,8 @@ public class ItemService implements IItemService {
                 .build()));
     }
 
-    void setBookings(ItemDto itemDto,
-                     Long userId) {
+    private void setBookings(ItemDto itemDto,
+                             Long userId) {
         if (itemDto.getOwner()
                 .equals(userId)) {
             BookingDtoOut lastBooking
@@ -151,7 +151,7 @@ public class ItemService implements IItemService {
         }
     }
 
-    void setComments(ItemDto itemDto) {
+    private void setComments(ItemDto itemDto) {
         List<CommentDtoOut> comments = commentRepository.findAllByItemId(itemDto.getId())
                 .stream()
                 .map(CommentMapper::toCommentDtoOut)
@@ -183,9 +183,9 @@ public class ItemService implements IItemService {
         }
     }
 
-    private void throwIfAllFieldsAreNull(Item item) {
-        if (item.getName() == null && item.getDescription() == null && item.getAvailable() == null
-                && item.getRequest() == null) {
+    private void throwIfAllFieldsAreNull(ItemDto itemDto) {
+        if (itemDto.getName() == null && itemDto.getDescription() == null
+                && itemDto.getAvailable() == null && itemDto.getRequestId() == null) {
             throw new BadRequestException(
                     "Item name, description, availability and request must be not null");
         }
