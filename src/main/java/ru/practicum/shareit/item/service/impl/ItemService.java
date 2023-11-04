@@ -10,6 +10,7 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.BadRequestException;
+import ru.practicum.shareit.exception.IllegalOwnerException;
 import ru.practicum.shareit.exception.ResourceNotFoundException;
 import ru.practicum.shareit.item.dto.CommentDtoIn;
 import ru.practicum.shareit.item.dto.CommentDtoOut;
@@ -57,7 +58,7 @@ public class ItemService implements IItemService {
                           ItemDto itemDto) {
         throwIfUserNotFound(userId);
         throwIfAllFieldsAreNull(itemDto);
-
+        throwIfNotOwner(userId, itemId);
         Item existingItem = getItemOrThrow(itemId);
         if (itemDto.getName() != null) {
             existingItem.setName(itemDto.getName());
@@ -189,6 +190,13 @@ public class ItemService implements IItemService {
                 && itemDto.getAvailable() == null && itemDto.getRequestId() == null) {
             throw new BadRequestException(
                     "Item name, description, availability and request must be not null");
+        }
+    }
+
+    private void throwIfNotOwner(Long userId, Long itemId) {
+        if (!itemRepository.existsByIdAndOwner(itemId, userId)) {
+            throw new IllegalOwnerException(String.format("User with id %d is not owner of item with id %d",
+                    userId, itemId));
         }
     }
 }

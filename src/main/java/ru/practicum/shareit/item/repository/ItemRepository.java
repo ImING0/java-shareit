@@ -10,6 +10,16 @@ import java.util.List;
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
     /**
+     * Проверка существования вещи по id и принадлежности пользователю
+     *
+     * @param id      id вещи
+     * @param ownerId id пользователя
+     * @return true, если вещь существует и принадлежит пользователю
+     */
+    boolean existsByIdAndOwner(Long id,
+                               Long ownerId);
+
+    /**
      * Получить все вещи пользователя по id владельца
      *
      * @param ownerId id владельца
