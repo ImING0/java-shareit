@@ -176,28 +176,39 @@ class ItemServiceTest {
          * Создать предмет класса Item со всеми заполенными полями (кромме букингов)
          * Создать last и next Booking, для установления в конечный Dto
          * Создать 2 комментария класса Comment*/
+        /*В общем, долго сидел, пытался реализовать полный тест для этого метода. Уперлось всё в
+        мапперы. В маппере BookngMapper используется два маппера, при тестах я не могу задать для
+        них поведение моока, не нашел способ. При попытке сделать как утилити класс столкунулся,
+        что он не видит их. потрачено почти 1,5 дня, решение не нашел. Метод будет протестирован
+        в интеграционном тесте. */
+
+    }
+
+    @Test
+    void getById_WhenItemNotFound_ThrowResourceNotFoundException() {
         Long itemId = 1L;
         Long userId = 1L;
-        Item existingItem = Item.builder()
-                .id(itemId)
-                .owner(userId)
-                .name("Пулемет")
-                .description("Мощный пулемет, чтобы косить зомби")
-                .available(true)
-                .build();
+        when(itemRepository.findById(itemId)).thenReturn(Optional.empty());
 
+        assertThrows(ResourceNotFoundException.class,
+                () -> itemService.getById(itemId, userId));
+
+        verify(itemRepository, times(1)).findById(itemId);
     }
 
     @Test
     void getAllOwnerItemsByOwnerId() {
+        /*Протестируем в интеграционном тесте...*/
     }
 
     @Test
     void search() {
+        /*Протестируем в интеграционном тесте...*/
     }
 
     @Test
     void addComment() {
+        /*Протестируем в интеграционном тесте...*/
     }
 
     private Booking setLastBooking(Item existingItem) {
