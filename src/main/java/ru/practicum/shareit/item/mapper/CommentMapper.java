@@ -1,10 +1,13 @@
 package ru.practicum.shareit.item.mapper;
 
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.UtilityClass;
+import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.dto.CommentDtoOut;
 import ru.practicum.shareit.item.model.Comment;
 
-@UtilityClass
+@Component
+@RequiredArgsConstructor
 public class CommentMapper {
 
     public CommentDtoOut toCommentDtoOut(Comment comment) {
@@ -17,8 +20,7 @@ public class CommentMapper {
                         .getId())
                 .authorName(comment.getAuthor()
                         .getName())
-                .created(comment.getCreated()
-                        .toString())
+                .created(comment.getCreated())
                 .build();
     }
 }

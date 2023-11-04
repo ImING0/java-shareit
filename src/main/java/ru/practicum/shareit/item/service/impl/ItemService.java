@@ -39,6 +39,7 @@ public class ItemService implements IItemService {
     private final BookingRepository bookingRepository;
     private final BookingMapper bookingMapper;
     private final CommentRepository commentRepository;
+    private final CommentMapper commentMapper;
 
     @Override
     @Transactional
@@ -124,7 +125,7 @@ public class ItemService implements IItemService {
         Booking booking = bookingRepository.findFirstByBookerIdAndItemIdAndEndIsBefore(userId,
                         itemId, LocalDateTime.now())
                 .orElseThrow(() -> new BadRequestException("You can't comment on this item"));
-        return CommentMapper.toCommentDtoOut(commentRepository.save(Comment.builder()
+        return commentMapper.toCommentDtoOut(commentRepository.save(Comment.builder()
                 .text(commentDtoIn.getText())
                 .author(user)
                 .item(item)
@@ -154,7 +155,7 @@ public class ItemService implements IItemService {
     private void setComments(ItemDto itemDto) {
         List<CommentDtoOut> comments = commentRepository.findAllByItemId(itemDto.getId())
                 .stream()
-                .map(CommentMapper::toCommentDtoOut)
+                .map(commentMapper::toCommentDtoOut)
                 .collect(Collectors.toList());
         itemDto.setComments(comments);
     }
