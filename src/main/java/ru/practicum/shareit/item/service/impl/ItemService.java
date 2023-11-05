@@ -58,8 +58,8 @@ public class ItemService implements IItemService {
                           ItemDto itemDto) {
         throwIfUserNotFound(userId);
         throwIfAllFieldsAreNull(itemDto);
-        throwIfNotOwner(userId, itemId);
         Item existingItem = getItemOrThrow(itemId);
+        throwIfNotOwner(userId, itemId);
         if (itemDto.getName() != null) {
             existingItem.setName(itemDto.getName());
         }
@@ -193,10 +193,12 @@ public class ItemService implements IItemService {
         }
     }
 
-    private void throwIfNotOwner(Long userId, Long itemId) {
+    private void throwIfNotOwner(Long userId,
+                                 Long itemId) {
         if (!itemRepository.existsByIdAndOwner(itemId, userId)) {
-            throw new IllegalOwnerException(String.format("User with id %d is not owner of item with id %d",
-                    userId, itemId));
+            throw new IllegalOwnerException(
+                    String.format("User with id %d is not owner of item with id %d", userId,
+                            itemId));
         }
     }
 }

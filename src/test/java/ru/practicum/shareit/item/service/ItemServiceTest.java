@@ -121,6 +121,7 @@ class ItemServiceTest {
                 .build();
         when(userRepository.existsById(userId)).thenReturn(true);
         when(itemRepository.findById(itemId)).thenReturn(Optional.ofNullable(existingItem));
+        when(itemRepository.existsByIdAndOwner(itemId, userId)).thenReturn(true);
 
         itemService.update(userId, itemId, itemDtoToUpdate);
 
@@ -190,8 +191,7 @@ class ItemServiceTest {
         Long userId = 1L;
         when(itemRepository.findById(itemId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class,
-                () -> itemService.getById(itemId, userId));
+        assertThrows(ResourceNotFoundException.class, () -> itemService.getById(itemId, userId));
 
         verify(itemRepository, times(1)).findById(itemId);
     }
@@ -219,8 +219,13 @@ class ItemServiceTest {
                 .end(LocalDateTime.now()
                         .minusDays(1))
                 .item(existingItem)
-                .booker(User.builder().id(33L).name("Вася").email("vasya@mail.ru")
-                        .build()).status(Status.APPROVED).build();
+                .booker(User.builder()
+                        .id(33L)
+                        .name("Вася")
+                        .email("vasya@mail.ru")
+                        .build())
+                .status(Status.APPROVED)
+                .build();
     }
 
     private Booking setNextBooking(Item existingItem) {
@@ -231,16 +236,23 @@ class ItemServiceTest {
                 .end(LocalDateTime.now()
                         .plusDays(3))
                 .item(existingItem)
-                .booker(User.builder().id(44L).name("Galya").email("galya@mail.ru")
-                        .build()).status(Status.APPROVED).build();
+                .booker(User.builder()
+                        .id(44L)
+                        .name("Galya")
+                        .email("galya@mail.ru")
+                        .build())
+                .status(Status.APPROVED)
+                .build();
     }
 
     private List<Comment> setComments(Item existingItem) {
         return List.of(Comment.builder()
-                .id(1L).item(existingItem)
+                .id(1L)
+                .item(existingItem)
                 .author(User.builder()
                         .id(33L)
-                        .name("Вася").email("vasya@mail.ru")
+                        .name("Вася")
+                        .email("vasya@mail.ru")
                         .build())
                 .text("Прекрасный товар!")
                 .created(LocalDateTime.now())
