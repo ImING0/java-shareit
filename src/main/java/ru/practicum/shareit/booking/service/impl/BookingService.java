@@ -37,9 +37,6 @@ public class BookingService implements IBookingService {
     @Transactional
     public BookingDtoOut create(Long userId,
                                 BookingDtoIn bookingDtoIn) {
-        /*Не стал делать запросы в сервисы, потому что посчитал, что так будет быстрее,
-         надежнее и
-         проще. Решил взаимодействовать напрямую с хранилищами.*/
         User user = getUserOrThrowIfNotExist(userId);
         Item item = getItemOrThrowIfNotExist(bookingDtoIn.getItemId());
         validateBookingBeforeCreate(userId, bookingDtoIn);
@@ -55,6 +52,11 @@ public class BookingService implements IBookingService {
                                 Long userId) {
         Booking booking = validateBookingDetails(bookingId, userId, ValidationType.UPDATE);
         booking.setStatus(approved ? Status.APPROVED : Status.REJECTED);
+        /*Меня тут смущает один момент. Не нашел этого в тзю
+         * Вот подтвердил юзер бронирование, хорошо, но должен ли статус вещи
+         * сразу становиться на available = false или юзер сам должен менять статус?
+         * Пока оставлю без изменений, так как нет четкого понимания конечного сценария
+         * взаимодействия*/
         return bookingMapper.toBookingDtoOut(bookingRepository.save(booking));
     }
 
