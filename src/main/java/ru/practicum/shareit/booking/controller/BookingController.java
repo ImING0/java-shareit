@@ -10,6 +10,7 @@ import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.service.IBookingService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
@@ -51,19 +52,25 @@ public class BookingController {
     @GetMapping
     public ResponseEntity<List<BookingDtoOut>> getAllForCurrentUser(
             @RequestHeader(requestHeader) Long userId,
-            @RequestParam(name = "state", defaultValue = "ALL") String state) {
+            @RequestParam(name = "state", defaultValue = "ALL") String state,
+            @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
+            @RequestParam(name = "size", defaultValue = "10") @PositiveOrZero Integer size) {
         log.info("getBookings request: userId = {}, state = {}", userId, state);
-        return ResponseEntity.ok(
-                bookingService.getAllBookingsForCurrentUserId(userId, State.fromString(state)));
+        return ResponseEntity.ok(bookingService.getAllBookingsForCurrentUserId(userId, from, size,
+                State.fromString(state)));
     }
 
     @GetMapping("/owner")
     public ResponseEntity<?> getAllForOwner(@RequestHeader(requestHeader) Long userId,
                                             @RequestParam(name = "state", defaultValue = "ALL")
-                                            String state) {
+                                            String state,
+                                            @RequestParam(name = "from", defaultValue = "0")
+                                            @PositiveOrZero Integer from,
+                                            @RequestParam(name = "size", defaultValue = "10")
+                                            @PositiveOrZero Integer size) {
         log.info("getBookings request: userId = {}, state = {}", userId, state);
-        return ResponseEntity.ok(
-                bookingService.getAllItemBookingsForOwnerId(userId, State.fromString(state)));
+        return ResponseEntity.ok(bookingService.getAllItemBookingsForOwnerId(userId, from, size,
+                State.fromString(state)));
     }
 }
 

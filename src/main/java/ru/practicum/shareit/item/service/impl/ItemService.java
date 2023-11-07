@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
@@ -9,6 +10,7 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.BadRequestException;
+import ru.practicum.shareit.exception.IllegalOwnerException;
 import ru.practicum.shareit.exception.ResourceNotFoundException;
 import ru.practicum.shareit.item.dto.CommentDtoIn;
 import ru.practicum.shareit.item.dto.CommentDtoOut;
@@ -22,6 +24,7 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.service.IItemService;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.util.OffsetBasedPageRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,33 +40,34 @@ public class ItemService implements IItemService {
     private final BookingRepository bookingRepository;
     private final BookingMapper bookingMapper;
     private final CommentRepository commentRepository;
+    private final CommentMapper commentMapper;
 
     @Override
     @Transactional
     public ItemDto create(Long userId,
-                          Item item) {
+                          ItemDto itemDto) {
         throwIfUserNotFound(userId);
-        item.setOwner(userId);
-        return itemMapper.toItemDto(itemRepository.save(item));
+        itemDto.setOwner(userId);
+        return itemMapper.toItemDto(itemRepository.save(itemMapper.toItem(itemDto)));
     }
 
     @Override
     @Transactional
     public ItemDto update(Long userId,
                           Long itemId,
-                          Item item) {
+                          ItemDto itemDto) {
         throwIfUserNotFound(userId);
-        throwIfAllFieldsAreNull(item);
-
+        throwIfAllFieldsAreNull(itemDto);
         Item existingItem = getItemOrThrow(itemId);
-        if (item.getName() != null) {
-            existingItem.setName(item.getName());
+        throwIfNotOwner(userId, itemId);
+        if (itemDto.getName() != null) {
+            existingItem.setName(itemDto.getName());
         }
-        if (item.getDescription() != null) {
-            existingItem.setDescription(item.getDescription());
+        if (itemDto.getDescription() != null) {
+            existingItem.setDescription(itemDto.getDescription());
         }
-        if (item.getAvailable() != null) {
-            existingItem.setAvailable(item.getAvailable());
+        if (itemDto.getAvailable() != null) {
+            existingItem.setAvailable(itemDto.getAvailable());
         }
         return itemMapper.toItemDto(itemRepository.save(existingItem));
     }
@@ -81,8 +85,11 @@ public class ItemService implements IItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ItemDto> getAllOwnerItemsByOwnerId(Long ownerId) {
-        return itemRepository.findAllByOwner(ownerId)
+    public List<ItemDto> getAllOwnerItemsByOwnerId(Long ownerId,
+                                                   Integer from,
+                                                   Integer size) {
+        Pageable pageable = new OffsetBasedPageRequest(from, size);
+        return itemRepository.findAllByOwner(ownerId, pageable)
                 .stream()
                 .map(item -> {
                     ItemDto itemDto = itemMapper.toItemDto(item);
@@ -95,11 +102,14 @@ public class ItemService implements IItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ItemDto> search(String name) {
+    public List<ItemDto> search(String name,
+                                Integer from,
+                                Integer size) {
         if (name == null || name.isBlank()) {
             return List.of();
         }
-        return itemRepository.search(name)
+        Pageable pageable = new OffsetBasedPageRequest(from, size);
+        return itemRepository.search(name, pageable)
                 .stream()
                 .map(itemMapper::toItemDto)
                 .collect(Collectors.toList());
@@ -116,7 +126,7 @@ public class ItemService implements IItemService {
         Booking booking = bookingRepository.findFirstByBookerIdAndItemIdAndEndIsBefore(userId,
                         itemId, LocalDateTime.now())
                 .orElseThrow(() -> new BadRequestException("You can't comment on this item"));
-        return CommentMapper.toCommentDtoOut(commentRepository.save(Comment.builder()
+        return commentMapper.toCommentDtoOut(commentRepository.save(Comment.builder()
                 .text(commentDtoIn.getText())
                 .author(user)
                 .item(item)
@@ -124,8 +134,8 @@ public class ItemService implements IItemService {
                 .build()));
     }
 
-    void setBookings(ItemDto itemDto,
-                     Long userId) {
+    private void setBookings(ItemDto itemDto,
+                             Long userId) {
         if (itemDto.getOwner()
                 .equals(userId)) {
             BookingDtoOut lastBooking
@@ -143,10 +153,10 @@ public class ItemService implements IItemService {
         }
     }
 
-    void setComments(ItemDto itemDto) {
+    private void setComments(ItemDto itemDto) {
         List<CommentDtoOut> comments = commentRepository.findAllByItemId(itemDto.getId())
                 .stream()
-                .map(CommentMapper::toCommentDtoOut)
+                .map(commentMapper::toCommentDtoOut)
                 .collect(Collectors.toList());
         itemDto.setComments(comments);
     }
@@ -175,11 +185,20 @@ public class ItemService implements IItemService {
         }
     }
 
-    private void throwIfAllFieldsAreNull(Item item) {
-        if (item.getName() == null && item.getDescription() == null && item.getAvailable() == null
-                && item.getRequest() == null) {
+    private void throwIfAllFieldsAreNull(ItemDto itemDto) {
+        if (itemDto.getName() == null && itemDto.getDescription() == null
+                && itemDto.getAvailable() == null && itemDto.getRequestId() == null) {
             throw new BadRequestException(
                     "Item name, description, availability and request must be not null");
+        }
+    }
+
+    private void throwIfNotOwner(Long userId,
+                                 Long itemId) {
+        if (!itemRepository.existsByIdAndOwner(itemId, userId)) {
+            throw new IllegalOwnerException(
+                    String.format("User with id %d is not owner of item with id %d", userId,
+                            itemId));
         }
     }
 }

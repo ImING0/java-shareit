@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.IllegalOwnerException;
-import ru.practicum.shareit.exception.ResourceAlreadyExistsException;
 import ru.practicum.shareit.exception.ResourceNotFoundException;
 import ru.practicum.shareit.util.ErrorResponse;
 
@@ -44,16 +43,6 @@ public class DefExceptionHandler {
         return ErrorResponse.builder()
                 .message(ex.getMessage())
                 .code(HttpStatus.NOT_FOUND.value())
-                .build();
-    }
-
-    @ExceptionHandler(value = {ResourceAlreadyExistsException.class})
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleUserEmailAlreadyExistException(ResourceAlreadyExistsException ex) {
-        log.error(ex.getMessage());
-        return ErrorResponse.builder()
-                .message(ex.getMessage())
-                .code(HttpStatus.CONFLICT.value())
                 .build();
     }
 

@@ -22,24 +22,22 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional
-    public UserDto create(User user) {
-        return userMapper.toUserDto(userRepository.save(user));
+    public UserDto create(UserDto userDto) {
+        return userMapper.toUserDto(userRepository.save(userMapper.toUser(userDto)));
     }
 
     @Override
     @Transactional
     public UserDto update(Long userId,
-                          User user) {
-        throwIfUserNotFoundException(userId);
-        User existingUser = userRepository.findById(userId)
-                .get();
-        if (user.getName() != null && !user.getName()
+                          UserDto userDto) {
+        User existingUser = findByIdOrThrow(userId);
+        if (userDto.getName() != null && !userDto.getName()
                 .isBlank()) {
-            existingUser.setName(user.getName());
+            existingUser.setName(userDto.getName());
         }
-        if (user.getEmail() != null && !user.getEmail()
+        if (userDto.getEmail() != null && !userDto.getEmail()
                 .isBlank()) {
-            existingUser.setEmail(user.getEmail());
+            existingUser.setEmail(userDto.getEmail());
         }
 
         return userMapper.toUserDto(userRepository.save(existingUser));
@@ -54,9 +52,8 @@ public class UserService implements IUserService {
     @Override
     @Transactional(readOnly = true)
     public UserDto getById(Long userId) {
-        return userMapper.toUserDto(userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("User with id %d not found", userId))));
+        User user = findByIdOrThrow(userId);
+        return userMapper.toUserDto(user);
     }
 
     @Override
@@ -68,9 +65,9 @@ public class UserService implements IUserService {
                 .collect(Collectors.toList());
     }
 
-    private void throwIfUserNotFoundException(Long userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new ResourceNotFoundException(String.format("User with id %d not found", userId));
-        }
+    private User findByIdOrThrow(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("User with id %d not found", userId)));
     }
 }

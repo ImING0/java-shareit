@@ -29,19 +29,27 @@ public interface IBookingService {
      * Получить все бронирования для текущего пользователя по его id
      *
      * @param userId id пользователя
+     * @param from
+     * @param size
      * @param state  статус бронирования
      * @return список бронирований
      */
     List<BookingDtoOut> getAllBookingsForCurrentUserId(Long userId,
+                                                       Integer from,
+                                                       Integer size,
                                                        State state);
 
     /**
      * Получить список бронирований для всех вещей текущего пользователя (их владельца)
      *
      * @param userId id владельца вещей
+     * @param from
+     * @param size
      * @param state  статус бронирования
      * @return список бронирований
      */
     List<BookingDtoOut> getAllItemBookingsForOwnerId(Long userId,
+                                                     Integer from,
+                                                     Integer size,
                                                      State state);
 }
