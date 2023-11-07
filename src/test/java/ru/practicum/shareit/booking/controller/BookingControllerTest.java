@@ -96,6 +96,30 @@ class BookingControllerTest {
     }
 
     @Test
+    void createBooking_WhenItemUnavailable_ReturnBadRequest() {
+        User savedOwner = userRepository.save(ownerOfFirstItem);
+        Item savedItem = itemOfFirstUser;
+        savedItem.setOwner(savedOwner.getId());
+        savedItem.setAvailable(false);
+        savedItem = itemRepository.save(savedItem);
+        User savedBooker = userRepository.save(bookerOfFirstItem);
+        BookingDtoIn bookingDtoIn = BookingDtoIn.builder()
+                .itemId(savedItem.getId())
+                .start(LocalDateTime.now()
+                        .plusSeconds(2))
+                .end(LocalDateTime.now()
+                        .plusDays(1))
+                .build();
+        webTestClient.post()
+                .uri("/bookings")
+                .header(requestHeader, String.valueOf(savedBooker.getId()))
+                .bodyValue(bookingDtoIn)
+                .exchange()
+                .expectStatus()
+                .isBadRequest();
+    }
+
+    @Test
     void createWhenValid_ReturnBooking() {
         User savedOwner = userRepository.save(ownerOfFirstItem);
         Item savedItem = itemOfFirstUser;
@@ -172,6 +196,27 @@ class BookingControllerTest {
 
         assertEquals(savedBooking.getId(), bookingDtoOut.getId());
         assertEquals(Status.APPROVED, bookingDtoOut.getStatus());
+    }
+
+    @Test
+    void updateBooking_WhenNotWaiting_ReturnBadRequest() {
+        User savedOwner = userRepository.save(ownerOfFirstItem);
+        User savedBooker = userRepository.save(bookerOfFirstItem);
+        itemOfFirstUser.setOwner(savedOwner.getId());
+        Item savedItem = itemRepository.save(itemOfFirstUser);
+        bookingOfFirstItem.setItem(savedItem);
+        bookingOfFirstItem.setBooker(savedBooker);
+        bookingOfFirstItem.setStatus(Status.APPROVED);
+        Booking savedBooking = bookingRepository.save(bookingOfFirstItem);
+
+        webTestClient.patch()
+                .uri(uriBuilder -> uriBuilder.path("/bookings/{bookingId}")
+                        .queryParam("approved", "true")
+                        .build(savedBooking.getId()))
+                .header(requestHeader, String.valueOf(savedOwner.getId()))
+                .exchange()
+                .expectStatus()
+                .isBadRequest();
     }
 
     @Test
@@ -359,6 +404,17 @@ class BookingControllerTest {
         assertEquals("Rejected Пылесос 'Циклон'", rejectedBookings.get(0)
                 .getItem()
                 .getName());
+    }
+
+    @Test
+    void getAllForCurrentUser_WhenUserNotFound_ReturnResourceNotFound() {
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/bookings")
+                        .build())
+                .header(requestHeader, String.valueOf(1L))
+                .exchange()
+                .expectStatus()
+                .isNotFound();
     }
 
     @Test
