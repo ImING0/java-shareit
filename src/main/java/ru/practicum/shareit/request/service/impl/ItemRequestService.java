@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.BadRequestException;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.ResourceNotFoundException;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDtoIn;
@@ -12,7 +12,6 @@ import ru.practicum.shareit.request.dto.ItemRequestDtoOut;
 import ru.practicum.shareit.request.mapper.RequestMapper;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.request.service.IItemRequestService;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.util.OffsetBasedPageRequest;
 
@@ -28,6 +27,7 @@ public class ItemRequestService implements IItemRequestService {
     private final RequestMapper requestMapper;
 
     @Override
+    @Transactional
     public ItemRequestDtoOut create(ItemRequestDtoIn itemRequestDtoIn,
                                     Long userId) {
         throwIfUserNotFound(userId);
@@ -36,6 +36,7 @@ public class ItemRequestService implements IItemRequestService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ItemRequestDtoOut getById(Long id,
                                      Long userId) {
         throwIfUserNotFound(userId);
@@ -46,6 +47,7 @@ public class ItemRequestService implements IItemRequestService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemRequestDtoOut> getAllByUserId(Long userId) {
         throwIfUserNotFound(userId);
         return itemRequestRepository.findAllByRequestorOrderByCreatedDesc(userId)
@@ -55,6 +57,7 @@ public class ItemRequestService implements IItemRequestService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemRequestDtoOut> getAllFromOthers(Long userId,
                                                     Integer from,
                                                     Integer size) {
@@ -65,12 +68,6 @@ public class ItemRequestService implements IItemRequestService {
                 .stream()
                 .map(requestMapper::toDtoOut)
                 .collect(Collectors.toList());
-    }
-
-    private User getUserOrThrow(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new BadRequestException(
-                        String.format("User with id %d not found", userId)));
     }
 
     private void throwIfUserNotFound(Long userId) {
