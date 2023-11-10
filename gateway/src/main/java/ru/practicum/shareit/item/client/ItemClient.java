@@ -19,7 +19,7 @@ public class ItemClient extends BaseClient {
     private static final String API_PREFIX = "/items";
 
     @Autowired
-    public ItemClient(@Value("${shareit-server.url}")String baseUrl) {
+    public ItemClient(@Value("${shareit-server.url}") String baseUrl) {
         super(baseUrl + API_PREFIX);
     }
 
@@ -56,7 +56,8 @@ public class ItemClient extends BaseClient {
     public ResponseEntity<List<ItemDtoOut>> search(String text,
                                                    Integer from,
                                                    Integer size) {
-        return getAll("/search", Map.of("text", text, "from", from.toString(), "size",
-                size.toString()), ItemDtoOut[].class);
+        return getAll("/search",
+                Map.of("text", text, "from", from.toString(), "size", size.toString()),
+                ItemDtoOut[].class);
     }
 }

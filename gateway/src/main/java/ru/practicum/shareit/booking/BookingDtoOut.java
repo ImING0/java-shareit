@@ -2,12 +2,10 @@ package ru.practicum.shareit.booking;
 
 import lombok.Builder;
 import lombok.Data;
-
 import ru.practicum.shareit.item.dto.ItemDtoOut;
 import ru.practicum.shareit.user.dto.UserDtoOut;
 
 import java.time.LocalDateTime;
-
 
 @Data
 @Builder

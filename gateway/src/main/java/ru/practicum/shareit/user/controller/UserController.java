@@ -9,7 +9,6 @@ import ru.practicum.shareit.user.dto.UserDtoIn;
 import ru.practicum.shareit.user.dto.UserDtoOut;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,9 +27,10 @@ public class UserController {
 
     @PatchMapping("/{userId}")
     public ResponseEntity<Object> updateUser(@PathVariable("userId") Long userId,
-                                              @RequestBody UserDtoIn userDtoIn) {
+                                             @RequestBody UserDtoIn userDtoIn) {
         log.info("updateUser request: userId = {}, user = {}", userId, userDtoIn);
-        return ResponseEntity.ok(userClient.update(userDtoIn, userId).getBody());
+        return ResponseEntity.ok(userClient.update(userDtoIn, userId)
+                .getBody());
     }
 
     @DeleteMapping("/{userId}")
@@ -44,12 +44,14 @@ public class UserController {
     @GetMapping("/{userId}")
     public ResponseEntity<Object> getUserById(@PathVariable("userId") Long userId) {
         log.info("getUserById request: userId = {}", userId);
-        return ResponseEntity.ok(userClient.getById(userId).getBody());
+        return ResponseEntity.ok(userClient.getById(userId)
+                .getBody());
     }
 
     @GetMapping
     public ResponseEntity<Object> getAllUsers() {
         log.info("getAllUsers request");
-        return ResponseEntity.ok(userClient.getAll().getBody());
+        return ResponseEntity.ok(userClient.getAll()
+                .getBody());
     }
 }

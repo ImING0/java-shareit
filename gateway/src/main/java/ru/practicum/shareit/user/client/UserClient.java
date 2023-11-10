@@ -15,6 +15,7 @@ import java.util.Map;
 public class UserClient extends BaseClient {
 
     private static final String API_PREFIX = "/users";
+
     @Autowired
     public UserClient(@Value("${shareit-server.url}") String baseUrl) {
         super(baseUrl + API_PREFIX);
@@ -24,7 +25,8 @@ public class UserClient extends BaseClient {
         return post("", userDtoIn, UserDtoOut.class);
     }
 
-    public ResponseEntity<UserDtoOut> update(UserDtoIn userDtoIn, Long userId) {
+    public ResponseEntity<UserDtoOut> update(UserDtoIn userDtoIn,
+                                             Long userId) {
         return patch("/" + userId.toString(), userDtoIn, userId, UserDtoOut.class);
     }
 
@@ -37,6 +39,6 @@ public class UserClient extends BaseClient {
     }
 
     public ResponseEntity<List<UserDtoOut>> getAll() {
-        return getAll("",  Map.of(), UserDtoOut[].class);
+        return getAll("", Map.of(), UserDtoOut[].class);
     }
 }

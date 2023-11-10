@@ -46,8 +46,8 @@ public class BaseClient {
     }
 
     protected <V> ResponseEntity<List<V>> getAll(String path,
-                                           Long userId,
-                                           Map<String, String> parameters,
+                                                 Long userId,
+                                                 Map<String, String> parameters,
                                                  Class<V[]> responseType) {
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         parameters.forEach(multiValueMap::add);
@@ -62,7 +62,6 @@ public class BaseClient {
 
         return new ResponseEntity<>(Arrays.asList(responseArray), HttpStatus.OK);
     }
-
 
     protected <V> ResponseEntity<List<V>> getAll(String path,
                                                  Map<String, String> parameters,

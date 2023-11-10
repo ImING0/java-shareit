@@ -3,20 +3,14 @@ package ru.practicum.shareit.exception.exceptionHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
-import ru.practicum.shareit.exception.BadRequestException;
-import ru.practicum.shareit.exception.IllegalOwnerException;
-import ru.practicum.shareit.exception.ResourceNotFoundException;
 import ru.practicum.shareit.util.ErrorResponse;
 
 @Slf4j
 @RestControllerAdvice(basePackages = "ru.practicum.shareit")
 public class DefExceptionHandler {
-
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleWebClientResponseException(WebClientResponseException ex) {
