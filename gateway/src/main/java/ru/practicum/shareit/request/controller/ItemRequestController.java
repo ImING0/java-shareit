@@ -4,10 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.request.client.ItemRequestClient;
 import ru.practicum.shareit.request.dto.ItemRequestDtoIn;
 import ru.practicum.shareit.request.dto.ItemRequestDtoOut;
-import ru.practicum.shareit.request.service.IItemRequestService;
 
+import javax.validation.Valid;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
@@ -17,7 +19,7 @@ import java.util.List;
 public class ItemRequestController {
 
     private final String requestHeader = "X-Sharer-User-Id";
-    private final IItemRequestService itemRequestService;
+    private final ItemRequestClient itemRequestClient;
 
     /**
      * Создание заявки на вещь.
@@ -29,10 +31,10 @@ public class ItemRequestController {
     @PostMapping
     public ResponseEntity<ItemRequestDtoOut> create(
             @RequestHeader(name = requestHeader) Long userId,
-            @RequestBody ItemRequestDtoIn itemRequestDtoIn) {
-        itemRequestDtoIn.setRequestorId(userId);
+            @RequestBody @Valid ItemRequestDtoIn itemRequestDtoIn) {
         log.info("Creating request for user {}, request {}", userId, itemRequestDtoIn);
-        return ResponseEntity.ok(itemRequestService.create(itemRequestDtoIn, userId));
+        return ResponseEntity.ok(itemRequestClient.create(itemRequestDtoIn, userId)
+                .getBody());
     }
 
     /**
@@ -46,7 +48,8 @@ public class ItemRequestController {
     public ResponseEntity<ItemRequestDtoOut> getById(
             @PathVariable(name = "requestId") Long requestId,
             @RequestHeader(name = requestHeader) Long userId) {
-        return ResponseEntity.ok(itemRequestService.getById(requestId, userId));
+        return ResponseEntity.ok(itemRequestClient.getById(requestId, userId)
+                .getBody());
     }
 
     /**
@@ -58,7 +61,8 @@ public class ItemRequestController {
     @GetMapping
     public ResponseEntity<List<ItemRequestDtoOut>> getAllByUserId(
             @RequestHeader(name = requestHeader) Long userId) {
-        return ResponseEntity.ok(itemRequestService.getAllByUserId(userId));
+        return ResponseEntity.ok(itemRequestClient.getAllByUserId(userId)
+                .getBody());
     }
 
     /**
@@ -71,9 +75,10 @@ public class ItemRequestController {
      */
     @GetMapping("/all")
     public ResponseEntity<List<ItemRequestDtoOut>> getAllRequests(
-            @RequestParam(name = "from", defaultValue = "0") Integer from,
-            @RequestParam(name = "size", defaultValue = "10") Integer size,
+            @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
+            @RequestParam(name = "size", defaultValue = "10") @PositiveOrZero Integer size,
             @RequestHeader(name = requestHeader) Long userId) {
-        return ResponseEntity.ok(itemRequestService.getAllFromOthers(userId, from, size));
+        return ResponseEntity.ok(itemRequestClient.getAllFromOthers(userId, from, size)
+                .getBody());
     }
 }

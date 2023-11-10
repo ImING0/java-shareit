@@ -111,7 +111,7 @@ class ItemControllerTest {
         assertEquals(itemDto.getAvailable(), itemDtoOut.getAvailable());
     }
 
-    @Test
+    /*@Test
     void create_WhenInvalidData_ReturnBadRequest() {
         User savedUser = userRepository.save(user1);
         Long userId = savedUser.getId();
@@ -124,7 +124,7 @@ class ItemControllerTest {
                 .exchange()
                 .expectStatus()
                 .isBadRequest();
-    }
+    }*/
 
     @Test
     void create_WhenUserNotFound_ReturnNotFound() {
