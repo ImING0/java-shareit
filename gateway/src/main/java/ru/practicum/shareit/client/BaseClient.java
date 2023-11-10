@@ -29,10 +29,10 @@ public class BaseClient {
                 .build();
     }
 
-    protected <V> ResponseEntity<V> getAll(String path,
-                                           Long userId,
-                                           Map<String, String> parameters,
-                                           Class<V> responseType) {
+    protected <V> ResponseEntity<V> get(String path,
+                                        Long userId,
+                                        Map<String, String> parameters,
+                                        Class<V> responseType) {
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         parameters.forEach(multiValueMap::add);
         return webClient.get()
@@ -43,6 +43,24 @@ public class BaseClient {
                 .retrieve()
                 .toEntity(responseType)
                 .block();
+    }
+
+    protected <V> ResponseEntity<List<V>> getAll(String path,
+                                           Long userId,
+                                           Map<String, String> parameters,
+                                                 Class<V[]> responseType) {
+        MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
+        parameters.forEach(multiValueMap::add);
+        V[] responseArray = webClient.get()
+                .uri(uriBuilder -> uriBuilder.path(path)
+                        .queryParams(multiValueMap)
+                        .build())
+                .header("X-Sharer-User-Id", userId.toString())
+                .retrieve()
+                .bodyToMono(responseType)
+                .block();
+
+        return new ResponseEntity<>(Arrays.asList(responseArray), HttpStatus.OK);
     }
 
 

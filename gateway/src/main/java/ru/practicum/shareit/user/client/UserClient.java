@@ -33,7 +33,7 @@ public class UserClient extends BaseClient {
     }
 
     public ResponseEntity<UserDtoOut> getById(Long userId) {
-        return getAll("/" + userId.toString(), userId, Map.of(), UserDtoOut.class);
+        return get("/" + userId.toString(), userId, Map.of(), UserDtoOut.class);
     }
 
     public ResponseEntity<List<UserDtoOut>> getAll() {
