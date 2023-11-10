@@ -9,8 +9,6 @@ import ru.practicum.shareit.booking.dto.BookingDtoOut;
 import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.service.IBookingService;
 
-import javax.validation.Valid;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
@@ -27,8 +25,7 @@ public class BookingController {
 
     @PostMapping
     public ResponseEntity<BookingDtoOut> createBooking(@RequestHeader(requestHeader) Long userId,
-                                                       @RequestBody
-                                                       @Valid BookingDtoIn bookingDtoIn) {
+                                                       @RequestBody BookingDtoIn bookingDtoIn) {
         log.info("createBooking request: userId = {}, bookingDtoIn = {}", userId, bookingDtoIn);
         return ResponseEntity.ok(bookingService.create(userId, bookingDtoIn));
     }
@@ -53,21 +50,19 @@ public class BookingController {
     public ResponseEntity<List<BookingDtoOut>> getAllForCurrentUser(
             @RequestHeader(requestHeader) Long userId,
             @RequestParam(name = "state", defaultValue = "ALL") String state,
-            @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
-            @RequestParam(name = "size", defaultValue = "10") @PositiveOrZero Integer size) {
+            @RequestParam(name = "from", defaultValue = "0") Integer from,
+            @RequestParam(name = "size", defaultValue = "10") Integer size) {
         log.info("getBookings request: userId = {}, state = {}", userId, state);
         return ResponseEntity.ok(bookingService.getAllBookingsForCurrentUserId(userId, from, size,
                 State.fromString(state)));
     }
 
     @GetMapping("/owner")
-    public ResponseEntity<List<BookingDtoOut>>  getAllForOwner(@RequestHeader(requestHeader) Long userId,
-                                            @RequestParam(name = "state", defaultValue = "ALL")
-                                            String state,
-                                            @RequestParam(name = "from", defaultValue = "0")
-                                            @PositiveOrZero Integer from,
-                                            @RequestParam(name = "size", defaultValue = "10")
-                                            @PositiveOrZero Integer size) {
+    public ResponseEntity<List<BookingDtoOut>> getAllForOwner(
+            @RequestHeader(requestHeader) Long userId,
+            @RequestParam(name = "state", defaultValue = "ALL") String state,
+            @RequestParam(name = "from", defaultValue = "0") Integer from,
+            @RequestParam(name = "size", defaultValue = "10") Integer size) {
         log.info("getBookings request: userId = {}, state = {}", userId, state);
         return ResponseEntity.ok(bookingService.getAllItemBookingsForOwnerId(userId, from, size,
                 State.fromString(state)));

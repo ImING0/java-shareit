@@ -9,8 +9,6 @@ import ru.practicum.shareit.item.dto.CommentDtoOut;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.IItemService;
 
-import javax.validation.Valid;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
@@ -27,7 +25,7 @@ public class ItemController {
 
     @PostMapping
     public ResponseEntity<ItemDto> createItem(@RequestHeader(requestHeader) Long userId,
-                                              @RequestBody @Valid ItemDto itemDto) {
+                                              @RequestBody ItemDto itemDto) {
         log.info("createItem request: userId = {}, item = {}", userId, itemDto);
         return ResponseEntity.ok(itemService.create(userId, itemDto));
     }
@@ -51,7 +49,7 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     public ResponseEntity<CommentDtoOut> addComment(@PathVariable Long itemId,
                                                     @RequestHeader(requestHeader) Long userId,
-                                                    @RequestBody @Valid CommentDtoIn commentDtoIn) {
+                                                    @RequestBody CommentDtoIn commentDtoIn) {
         log.info("addComment request: itemId = {}, userId = {}, commentDtoIn = {}", itemId, userId,
                 commentDtoIn);
         return ResponseEntity.ok(itemService.addComment(itemId, userId, commentDtoIn));
@@ -60,8 +58,8 @@ public class ItemController {
     @GetMapping
     public ResponseEntity<List<ItemDto>> getAllOwnerItemsByOwnerId(
             @RequestHeader(requestHeader) Long ownerId,
-            @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
-            @RequestParam(name = "size", defaultValue = "10") @PositiveOrZero Integer size) {
+            @RequestParam(name = "from", defaultValue = "0") Integer from,
+            @RequestParam(name = "size", defaultValue = "10") Integer size) {
         log.info("getAllOwnerItemsByOwnerId request: ownerId = {}", ownerId);
         return ResponseEntity.ok(itemService.getAllOwnerItemsByOwnerId(ownerId, from, size));
     }
@@ -69,10 +67,9 @@ public class ItemController {
     @GetMapping("/search")
     public ResponseEntity<List<ItemDto>> searchItem(@RequestParam("text") String text,
                                                     @RequestParam(name = "from", defaultValue = "0")
-                                                    @PositiveOrZero Integer from,
+                                                    Integer from,
                                                     @RequestParam(name = "size",
-                                                            defaultValue = "10")
-                                                    @PositiveOrZero Integer size) {
+                                                            defaultValue = "10") Integer size) {
         log.info("searchItem request: text = {}", text);
         return ResponseEntity.ok(itemService.search(text, from, size));
     }

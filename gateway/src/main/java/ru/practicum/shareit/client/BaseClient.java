@@ -37,12 +37,12 @@ public class BaseClient {
     /**
      * Метод для получения одного объекта из другого сервиса
      *
-     * @param path        путь до ресурса
-     * @param userId     id пользователя
-     * @param parameters параметры запроса
-     * @param responseType  тип возвращаемого объекта
-     * @param <V>       тип возвращаемого объекта
-     * @return  объект типа V
+     * @param path         путь до ресурса
+     * @param userId       id пользователя
+     * @param parameters   параметры запроса
+     * @param responseType тип возвращаемого объекта
+     * @param <V>          тип возвращаемого объекта
+     * @return объект типа V
      */
     protected <V> ResponseEntity<V> get(String path,
                                         Long userId,
@@ -63,11 +63,11 @@ public class BaseClient {
     /**
      * Метод для получения списка объектов из другого сервиса с указанием пользователя
      *
-     * @param path       путь до ресурса
-     * @param userId   id пользователя
-     * @param parameters параметры запроса
+     * @param path         путь до ресурса
+     * @param userId       id пользователя
+     * @param parameters   параметры запроса
      * @param responseType тип возвращаемого объекта
-     * @param <V>       тип возвращаемого объекта
+     * @param <V>          тип возвращаемого объекта
      * @return список объектов типа V
      */
     protected <V> ResponseEntity<List<V>> getAll(String path,
@@ -91,10 +91,10 @@ public class BaseClient {
     /**
      * Метод для получения списка объектов из другого сервиса без указания пользователя
      *
-     * @param path      путь до ресурса
-     * @param parameters параметры запроса
-     * @param responseType  тип возвращаемого объекта
-     * @param <V>      тип возвращаемого объекта
+     * @param path         путь до ресурса
+     * @param parameters   параметры запроса
+     * @param responseType тип возвращаемого объекта
+     * @param <V>          тип возвращаемого объекта
      * @return список объектов типа V
      */
     protected <V> ResponseEntity<List<V>> getAll(String path,
@@ -116,12 +116,12 @@ public class BaseClient {
     /**
      * Метод для отправки POST запроса с указанием пользователя
      *
-     * @param path    путь до ресурса
-     * @param body   тело запроса
-     * @param userId id пользователя
+     * @param path         путь до ресурса
+     * @param body         тело запроса
+     * @param userId       id пользователя
      * @param responseType тип возвращаемого объекта
-     * @param <T>   тип тела запроса
-     * @param <V>  тип возвращаемого объекта
+     * @param <T>          тип тела запроса
+     * @param <V>          тип возвращаемого объекта
      * @return объект типа V
      */
     protected <T, V> ResponseEntity<V> post(String path,
@@ -140,11 +140,11 @@ public class BaseClient {
     /**
      * Метод для отправки POST запроса без указания пользователя
      *
-     * @param path путь до ресурса
-     * @param body тело запроса
+     * @param path         путь до ресурса
+     * @param body         тело запроса
      * @param responseType тип возвращаемого объекта
-     * @param <T> тип тела запроса
-     * @param <V> тип возвращаемого объекта
+     * @param <T>          тип тела запроса
+     * @param <V>          тип возвращаемого объекта
      * @return объект типа V
      */
     protected <T, V> ResponseEntity<V> post(String path,
@@ -161,11 +161,11 @@ public class BaseClient {
     /**
      * Метод для отправки PATCH запроса с указанием пользователя
      *
-     * @param path путь до ресурса
-     * @param body тело запроса
-     * @param userId id пользователя
-     * @param responseType  тип возвращаемого объекта
-     * @param <V> тип возвращаемого объекта
+     * @param path         путь до ресурса
+     * @param body         тело запроса
+     * @param userId       id пользователя
+     * @param responseType тип возвращаемого объекта
+     * @param <V>          тип возвращаемого объекта
      * @return
      */
     protected <V> ResponseEntity<V> patch(String path,
@@ -178,16 +178,15 @@ public class BaseClient {
 
         WebClient.ResponseSpec responseSpec;
         if (body != null) {
-            responseSpec = uriSpec.bodyValue(body).retrieve();
+            responseSpec = uriSpec.bodyValue(body)
+                    .retrieve();
         } else {
             responseSpec = uriSpec.retrieve();
         }
 
-        return responseSpec.toEntity(responseType).block();
+        return responseSpec.toEntity(responseType)
+                .block();
     }
-
-
-
 
     protected Mono<ResponseEntity<Object>> delete(String path,
                                                   Long userId) {

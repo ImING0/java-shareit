@@ -28,7 +28,8 @@ public class BookingClient extends BaseClient {
     public ResponseEntity<BookingDtoOut> update(Long bookingId,
                                                 Boolean approved,
                                                 Long userId) {
-        return patch("/" + bookingId + "?approved=" + approved.toString(), null, userId, BookingDtoOut.class);
+        return patch("/" + bookingId + "?approved=" + approved.toString(), null, userId,
+                BookingDtoOut.class);
     }
 
     public ResponseEntity<BookingDtoOut> getBookingById(Long bookingId,
@@ -40,8 +41,8 @@ public class BookingClient extends BaseClient {
                                                                               Integer from,
                                                                               Integer size,
                                                                               State state) {
-        return getAll("", userId, Map.of("from", from.toString(), "size", size.toString(), "state",
-                        state.toString()),
+        return getAll("", userId,
+                Map.of("from", from.toString(), "size", size.toString(), "state", state.toString()),
                 BookingDtoOut[].class);
     }
 
@@ -49,8 +50,8 @@ public class BookingClient extends BaseClient {
                                                                             Integer from,
                                                                             Integer size,
                                                                             State state) {
-        return getAll("/owner", userId, Map.of("from", from.toString(), "size", size.toString(), "state",
-                        state.toString()),
+        return getAll("/owner", userId,
+                Map.of("from", from.toString(), "size", size.toString(), "state", state.toString()),
                 BookingDtoOut[].class);
     }
 }
