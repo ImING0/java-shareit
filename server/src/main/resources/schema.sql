@@ -4,10 +4,9 @@ drop table if exists BOOKINGS cascade;
 drop table if exists COMMENTS cascade;
 drop table if exists REQUESTS cascade;
 
-
 create table USERS
 (
-    ID    BIGINT auto_increment,
+    ID    BIGSERIAL,
     NAME  CHARACTER VARYING(73)  not null,
     EMAIL CHARACTER VARYING(260) not null
         constraint "USERS_pk_email"
@@ -18,7 +17,7 @@ create table USERS
 
 create table ITEMS
 (
-    ID          BIGINT auto_increment,
+    ID          BIGSERIAL,
     OWNER_ID    BIGINT                  not null,
     NAME        CHARACTER VARYING(128)  not null,
     DESCRIPTION CHARACTER VARYING(1024) not null,
@@ -33,7 +32,7 @@ create table ITEMS
 
 create table COMMENTS
 (
-    ID           BIGINT auto_increment,
+    ID           BIGSERIAL,
     TEXT         VARCHAR(6666)               not null,
     ITEM_ID      BIGINT                      not null,
     AUTHOR_ID    BIGINT                      not null,
@@ -48,13 +47,12 @@ create table COMMENTS
             on update cascade on delete cascade
 );
 
-
 create table BOOKINGS
 (
-    ID         BIGINT auto_increment,
+    ID         BIGSERIAL,
     ITEM_ID    BIGINT    not null,
     BOOKER_ID  BIGINT,
-    STATUS     ENUM ('WAITING', 'APPROVED', 'REJECTED', 'CANCELED') NOT NULL DEFAULT 'WAITING',
+    STATUS     VARCHAR(10) NOT NULL DEFAULT 'WAITING',
     START_DATE TIMESTAMP not null,
     END_DATE   TIMESTAMP not null,
     constraint "BOOKINGS_pk_ID"
@@ -69,7 +67,7 @@ create table BOOKINGS
 
 create table REQUESTS
 (
-    ID          BIGINT auto_increment,
+    ID          BIGSERIAL,
     DESCRIPTION VARCHAR(400)                not null,
     REQUESTOR_ID   BIGINT                      not null,
     CREATED     TIMESTAMP WITHOUT TIME ZONE not null,
@@ -78,4 +76,3 @@ create table REQUESTS
     constraint "REQUESTS_REQUESTOR_ID_fk"
         foreign key (REQUESTOR_ID) references USERS
 );
-
