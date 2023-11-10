@@ -3,9 +3,14 @@ package ru.practicum.shareit.exception.exceptionHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import ru.practicum.shareit.exception.BadRequestException;
+import ru.practicum.shareit.exception.IllegalOwnerException;
+import ru.practicum.shareit.exception.ResourceNotFoundException;
 import ru.practicum.shareit.util.ErrorResponse;
 
 @Slf4j
@@ -25,7 +30,7 @@ public class DefExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(ex.getRawStatusCode()));
     }
 
-    /*@ExceptionHandler(BadRequestException.class)
+    @ExceptionHandler(BadRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequestException(BadRequestException ex) {
         log.error("Bad request", ex);
@@ -64,5 +69,5 @@ public class DefExceptionHandler {
                 .message(ex.getMessage())
                 .code(HttpStatus.FORBIDDEN.value())
                 .build();
-    }*/
+    }
 }
