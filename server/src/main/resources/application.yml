@@ -1,0 +1,95 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL10Dialect
+        format_sql: true
+  #---
+  # TODO Append connection to DB
+  #---
+  sql:
+    init:
+      mode: always
+  config:
+    activate:
+      on-profile: ci,test
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:shareit
+    username: test
+    password: test
+
+logging:
+  level:
+    org.springframework.orm.jpa: INFO
+    org.springframework.transaction: INFO
+    org.springframework.transaction.interceptor: TRACE
+    org.springframework.orm.jpa.JpaTransactionManager: DEBUG
+
+---
+spring:
+  # Профиль для тестов на ПК
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL10Dialect
+        format_sql: true
+        show_sql: true
+  sql:
+    init:
+      mode: always
+  config:
+    activate:
+      on-profile: default
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:file:./db/shareit;AUTO_SERVER=TRUE
+    username: shareit
+    password: shareit
+
+logging:
+  level:
+    org.springframework.orm.jpa: INFO
+    org.springframework.transaction: INFO
+    org.springframework.transaction.interceptor: TRACE
+    org.springframework.orm.jpa.JpaTransactionManager: INFO # был дебаг
+server:
+  port: 9090
+
+---
+# для тестов в контейнере
+
+spring:
+  # Профиль для тестов на ПК
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL10Dialect
+        format_sql: true
+        show_sql: true
+  sql:
+    init:
+      mode: always
+  config:
+    activate:
+      on-profile: docker
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://db:5432/shareit} # используй переменную окружения или, если она отсутствует, fallback на H2
+    username: ${DB_USERNAME:shareit} # аналогично для имени пользователя
+    password: ${DB_PASSWORD:shareit} # и для пароля
+
+logging:
+  level:
+    org.springframework.orm.jpa: INFO
+    org.springframework.transaction: INFO
+    org.springframework.transaction.interceptor: TRACE
+    org.springframework.orm.jpa.JpaTransactionManager: INFO # был дебаг
+server:
+  port: 9090
